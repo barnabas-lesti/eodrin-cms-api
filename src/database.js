@@ -4,6 +4,9 @@ const ApiError = require('./ApiError');
 const config = require('./config');
 const logger = require('./logger');
 
+/**
+ * Database logic handler.
+ */
 class Database {
 	constructor () {
 		this._mongoose = mongoose;

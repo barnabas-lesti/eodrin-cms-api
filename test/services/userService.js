@@ -4,7 +4,9 @@ const ApiError = require('../../src/ApiError');
 const database = require('../../src/database');
 const userService = require('../../src/services/userService');
 
-describe('userService', () => {
+describe('UserService', () => {
+	const existingEmail = 'test@mail.com';
+
 	before(async () => {
 		await database.connect();
 		await database.clearCollection(userService.getModel());
@@ -19,7 +21,7 @@ describe('userService', () => {
 		it('should save a new user to the database and return a promise with the '
 			+ 'created user if the provided user object was valid', async () => {
 			const validUserToCreate = {
-				email: 'test@mail.com',
+				email: existingEmail,
 				password: 'test1234',
 			};
 			const createdUser = await userService.createUser(validUserToCreate);
@@ -44,7 +46,7 @@ describe('userService', () => {
 		it('should throw an error with type IDENTIFIER_TAKEN if the provided '
 			+ 'users email is already taken', async () => {
 			const userWithAlreadyTakenEmail = {
-				email: 'test@mail.com',
+				email: existingEmail,
 				password: 'test1234',
 			};
 			let user = null;
@@ -62,7 +64,7 @@ describe('userService', () => {
 
 	describe('getUser', () => {
 		it('should return a promise with the user if found', async () => {
-			const existingUserEmail = 'test@mail.com';
+			const existingUserEmail = existingEmail;
 			let user;
 			let anErrorThatShouldNotBeHere = null;
 			try {
@@ -91,19 +93,55 @@ describe('userService', () => {
 	describe('updateUser', () => {
 		it('should update a user and return a promise with the user if the update '
 			+ 'is valid', async () => {
-			assert.fail('NOT_IMPLEMENTED');
+			const email = existingEmail;
+			const update = {
+				password: 'updatedPassword',
+			};
+			let updatedUser;
+			let anErrorThatShouldNotBeHere = null;
+			try {
+				updatedUser = await userService.updateUser(email, update);
+			} catch (error) {
+				anErrorThatShouldNotBeHere = error;
+			}
+			assert.isNull(anErrorThatShouldNotBeHere);
+			assert.isDefined(updatedUser);
+			expect(updatedUser.password).to.equal(update.password);
 		});
-		it('should throw an error if the user was not found', async () => {
-			assert.fail('NOT_IMPLEMENTED');
+		it('should not update readonly fields like the email', async () => {
+			const email = existingEmail;
+			const update = {
+				email: 'notTheOriginalEmail@mail.com',
+				password: 'updatedPassword',
+			};
+			let updatedUser;
+			let anErrorThatShouldNotBeHere = null;
+			try {
+				updatedUser = await userService.updateUser(email, update);
+			} catch (error) {
+				anErrorThatShouldNotBeHere = error;
+			}
+			assert.isNull(anErrorThatShouldNotBeHere);
+			assert.isDefined(updatedUser);
+			expect(updatedUser.email).to.equal(email);
 		});
-		it('should throw an error if the update is not valid', async () => {
-			assert.fail('NOT_IMPLEMENTED');
+		it('should return a promise with null if user was not found', async () => {
+			const nonExistingUserEmail = 'firstTimeHere@mail.com';
+			let success;
+			let anErrorThatShouldNotBeHere = null;
+			try {
+				success = await userService.updateUser(nonExistingUserEmail, {});
+			} catch (error) {
+				anErrorThatShouldNotBeHere = error;
+			}
+			assert.isNull(anErrorThatShouldNotBeHere);
+			assert.isNull(success);
 		});
 	});
 
 	describe('deleteUser', () => {
 		it('should delete a user and return a promise with boolean true', async () => {
-			const existingUserEmail = 'test@mail.com';
+			const existingUserEmail = existingEmail;
 			let success;
 			let anErrorThatShouldNotBeHere = null;
 			try {
