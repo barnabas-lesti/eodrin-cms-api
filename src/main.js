@@ -1,4 +1,3 @@
-const config = require('./config');
-const database = require('./database');
-
-// database.connect();
+// const config = require('./config');
+// const database = require('./database');
+// const logger = require('./logger');

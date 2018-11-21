@@ -25,11 +25,7 @@ describe('Eodrin CMS API', () => {
 
 	require('./database');
 
-	describe('Services', async () => {
-		await _requireTests(servicesDir);
-	});
+	describe('Services', async () => await _requireTests(servicesDir));
 
-	describe('Endpoints', async () => {
-		await _requireTests(endpointsDir);
-	});
+	describe('Endpoints', async () => await _requireTests(endpointsDir));
 });

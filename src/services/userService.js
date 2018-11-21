@@ -2,13 +2,19 @@ const ApiError = require('../ApiError');
 const User = require('./models/User');
 const Service = require('./Service');
 
+/**
+ * User logic related service.
+ */
 class UserService extends Service {
 	constructor () {
 		super(User);
 
-		this._requiredFields = [
+		this.requiredFields = [
 			'email',
 			'password',
+		];
+		this.readOnlyFields = [
+			'email',
 		];
 	}
 
@@ -28,7 +34,7 @@ class UserService extends Service {
 			if (error.code === 11000) {
 				throw new ApiError(ApiError.IDENTIFIER_TAKEN);
 			} else if (error.message && error.message.indexOf('is required') !== -1) {
-				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING, this._requiredFields);
+				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING, this.requiredFields);
 			} else {
 				throw new ApiError(ApiError.SERVICE_ERROR);
 			}
@@ -52,16 +58,32 @@ class UserService extends Service {
 		}
 	}
 
+	/**
+	 * Updated the user with the provided data.
+	 *
+	 * @param {string} email User email address
+	 * @param {User} update Updated user data
+	 * @returns {Promise<User>} Updated user
+	 * @throws {ApiError} Cause of the failure
+	 */
 	async updateUser (email, update) {
+		const sanitizedUpdate = this.sanitizeUpdate(update);
 		try {
-			const updatedUser = await User.findOneAndUpdate({ email }, update);
+			const updatedUser = await User.findOneAndUpdate({ email }, sanitizedUpdate, { new: true });
 			return updatedUser;
 		} catch (error) {
 			this.logger.error(error);
-			return null;
+			throw new ApiError(ApiError.SERVICE_ERROR);
 		}
 	}
 
+	/**
+	 * Deletes a user based on the email address.
+	 *
+	 * @param {string} email User email address
+	 * @returns {Promise<true|null>} True if user was found, null if not
+	 * @throws {ApiError} Cause of the failure
+	 */
 	async deleteUser (email) {
 		try {
 			const result = await User.findOneAndDelete({ email });

@@ -1,3 +1,2 @@
-
-const users = '';
+const users = null;
 module.exports = users;

@@ -1,3 +1,6 @@
+/**
+ * API Error class.
+ */
 class ApiError extends Error {
 	constructor (type, payload) {
 		super(`Type: "${ type }" api error occurred`);

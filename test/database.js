@@ -15,7 +15,9 @@ describe('Database', () => {
 	});
 
 	after(async () => {
-		connected = await database.disconnect();
+		if (connected) {
+			await database.disconnect();
+		}
 	});
 
 	describe('connect', () => {
@@ -23,6 +25,17 @@ describe('Database', () => {
 			+ 'with boolean true', async () => {
 			assert.isTrue(connected);
 			assert.isFalse(wasError);
+		});
+	});
+
+	describe('disconnect', () => {
+		it('should disconnect without any errors and return a promise '
+		+ 'with boolean true', async () => {
+			try {
+				assert.isTrue(await database.disconnect());
+			} catch (error) {
+				assert.fail('Connection should be able to close without an error');
+			}
 		});
 	});
 });
