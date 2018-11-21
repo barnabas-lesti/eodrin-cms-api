@@ -13,10 +13,15 @@ Backend API for Eodrin CMS.
 - [MongoDB](https://www.mongodb.com)
   - ... or you can connect to an already existing public database
   - The `mongo` command should be available via cmd, adding it to the path might be required
-  - Create the DB and a user
+  - Create the DB and a user for the app
 ```js
+// By default ('./env/default.yaml') the app will try to connect to a local database "eodrin"
 use eodrin
 db.createUser({ user: "admin", pwd: "admin", roles: [{ role: "readWrite", db: "eodrin" }] })
+
+// Tests ('./env/test.yaml') use the local test database "eodrin_test"
+use eodrin_test
+db.createUser({ user: "admin", pwd: "admin", roles: [{ role: "readWrite", db: "eodrin_test" }] })
 ```
 
 ### Commands and scripts
