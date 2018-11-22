@@ -1,11 +1,11 @@
 const ApiError = require('../ApiError');
+const CRUDService = require('./CRUDService');
 const Post = require('./models/Post');
-const Service = require('./Service');
 
 /**
  * Post logic related service.
  */
-class PostService extends Service {
+class PostService extends CRUDService {
 	constructor () {
 		super(Post);
 
