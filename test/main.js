@@ -8,16 +8,16 @@ const packs = [
 	{
 		description: 'Integration Tests',
 		type: 'integration',
-	}
+	},
 ];
 
 /**
  * Imports all tests from a specific library.
- * 
+ *
  * @param {string} directory Directory name
  * @returns {void}
  */
-function requireTests(directory) {
+function requireTests (directory) {
 	const dirPath = path.join(__dirname, directory);
 	const files = fs.readdirSync(dirPath);
 	for (const file of files) {

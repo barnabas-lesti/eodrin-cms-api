@@ -6,7 +6,7 @@
   "scripts": {
     "serve": "nodemon ./src/main.js --ignore ./test -e js,yaml",
     "lint": "eslint ./**/*.js",
-    "test": "mocha ./test/main.js"
+    "test": "mocha ./test/main.js --exit"
   },
   "author": "Barnabas Lesti <barnabas.lesti@gmail.com>",
   "license": "ISC",

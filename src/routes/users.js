@@ -10,16 +10,14 @@ users.route('/users')
 
 	})
 	.get((req, res) => {
-		res.json({
-			users: [],
-		});
+		res.json([]);
 	});
 
 users.route('/users/:email')
 	.get((req, res) => {
 
 	})
-	.put((req, res) => {
+	.patch((req, res) => {
 
 	})
 	.delete((req, res) => {
