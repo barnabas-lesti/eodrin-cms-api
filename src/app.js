@@ -3,11 +3,12 @@ const compression = require('compression');
 const cors = require('cors');
 const express = require('express');
 
-// const config = require('./config');
+const config = require('./config');
 const database = require('./database');
-// const logger = require('./logger');
+const logger = require('./logger');
 
-const users = require('./routers/users');
+// TODO
+const users = require('./routes/users');
 
 const app = express();
 
@@ -19,9 +20,8 @@ app.use(bodyParser.json());
 // TODO
 app.use('/api', users);
 
-app.listen = function (...args) {
-	database.connect();
-	app.listen(...args);
-};
+// database.connect();
+// app.listen(config.PORT);
+// logger.info(`API listening on port ${ config.PORT }`);
 
 module.exports = app;
