@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const yargs = require('yargs');
 
+const { requester } = require('./suite');
+
 const packs = [
 	{
 		description: 'Integration Tests',
@@ -28,6 +30,11 @@ function requireTests (directory) {
 describe('Eodrin API Tests', () => {
 	const onlyArg = yargs.argv.only;
 	const packArg = yargs.argv.pack;
+
+	after(() => {
+		requester.close();
+	});
+
 	if (onlyArg) {
 		require(path.join(__dirname, onlyArg));
 	} else {

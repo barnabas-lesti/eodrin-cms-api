@@ -59,6 +59,23 @@ class UserService extends CRUDService {
 	}
 
 	/**
+	 * Searches for users based on query.
+	 *
+	 * @param {object} query Search query
+	 * @returns {Promise<[User]>} Found users
+	 * @throws {ApiError} Cause of the failure
+	 */
+	async getUsers (query = {}) {
+		try {
+			const users = await User.find(query);
+			return users;
+		} catch (error) {
+			this.logger.error(error);
+			throw new ApiError(ApiError.SERVICE_ERROR);
+		}
+	}
+
+	/**
 	 * Updated the user with the provided data.
 	 *
 	 * @param {string} email User email address

@@ -20,8 +20,8 @@ app.use(bodyParser.json());
 // TODO
 app.use('/api', users);
 
-// database.connect();
-// app.listen(config.PORT);
+database.connect();
+app.listen(config.PORT);
 // logger.info(`API listening on port ${ config.PORT }`);
 
 module.exports = app;

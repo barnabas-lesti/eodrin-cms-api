@@ -1,5 +1,5 @@
 AUTH_TOKEN_EXPIRATION: '48h'
 ENV: 'development'
-MONGO_URI: 'mongodb://admin:admin@localhost:27017/eodrin'
+MONGO_URI: 'mongodb://admin:admin@127.0.0.1:27017/eodrin'
 PORT: 8080
 SECRET: 'defaultAppSecret1234'
