@@ -57,7 +57,9 @@ yarn test --only="integration/users.test"
 ### Articles
 - App structure: https://scotch.io/tutorials/test-a-node-restful-api-with-mocha-and-chai
 - Performance best practices: https://expressjs.com/en/advanced/best-practice-performance.html
-- Restful API Design: https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api
+- Restful API Design:
+  - https://stripe.com/docs/api
+  - https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api
 - Testing NodeJS:
   - https://scotch.io/tutorials/test-a-node-restful-api-with-mocha-and-chai
   - https://hackernoon.com/testing-node-js-in-2018-10a04dd77391

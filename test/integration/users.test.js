@@ -13,7 +13,7 @@ describe('USERS', () => {
 	const existingEmail = 'existing@mail.com';
 
 	describe('GET /api/users', () => { 
-		it('should return an array containing users', async () => { 
+		it('should return a users array', async () => { 
 			request
 				.get('/api/users')
 				.end((err, res) => {
@@ -22,6 +22,29 @@ describe('USERS', () => {
 					res.should.be
 				});
 		});
+	});
+
+	describe('POST /api/users', () => { 
+		it('should save the provided user and return it but without the password', async () => { 
+
+		});
+		it(`should have status 500 and an error object with type: "${ApiError.IDENTIFIER_TAKEN}" if email is taken`, async () => { 
+
+		});
+	});
+
+	describe('GET /api/users/:email', () => { 
+		it('should save a user and hash the password', async () => { 
+
+		});
+	});
+
+	describe('PUT /api/users/:email', () => { 
+
+	});
+
+	describe('DELETE /api/users/:email', () => { 
+
 	});
 
 	// describe('POST /api/users', () => { 
