@@ -26,19 +26,23 @@ db.createUser({ user: "admin", pwd: "admin", roles: [{ role: "readWrite", db: "e
 
 ### Commands and scripts
 ```bash
-# Install dependencies:
+# Install dependencies
 yarn
 
-# Start the server and reload when files change:
+# Start the server and reload when files change
 yarn serve
 
 # Lint the source code
 yarn lint
-# ... to fix trivial errors:
+# ... to fix trivial errors
 yarn lint --fix
 
-# Run tests
+# Executes all test packs
 yarn test
+# Execute only a test pack
+yarn test --pack="integration"
+# Execute a specific test
+yarn test --only="integration/users.test"
 ```
 
 ### Useful tools
@@ -53,6 +57,9 @@ yarn test
 ### Articles
 - App structure: https://scotch.io/tutorials/test-a-node-restful-api-with-mocha-and-chai
 - Performance best practices: https://expressjs.com/en/advanced/best-practice-performance.html
+- Restful API Design:
+  - https://stripe.com/docs/api
+  - https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api
 - Testing NodeJS:
   - https://scotch.io/tutorials/test-a-node-restful-api-with-mocha-and-chai
   - https://hackernoon.com/testing-node-js-in-2018-10a04dd77391

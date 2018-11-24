@@ -1,21 +1,17 @@
 const ApiError = require('../ApiError');
-const CRUDService = require('./CRUDService');
+const authService = require('./authService');
+const DataAccessService = require('./DataAccessService');
 const User = require('./models/User');
 
 /**
  * User logic related service.
  */
-class UserService extends CRUDService {
+class UserService extends DataAccessService {
 	constructor () {
-		super(User);
+		super();
 
-		this.requiredFields = [
-			'email',
-			'password',
-		];
-		this.readOnlyFields = [
-			'email',
-		];
+		this.readOnlyFields = [ 'email' ];
+		this.requiredFields = [ 'email', 'password' ];
 	}
 
 	/**
@@ -26,12 +22,18 @@ class UserService extends CRUDService {
 	 * @throws {ApiError} Cause of the failure
 	 */
 	async createUser (user) {
+		const userToCreate = user;
 		try {
-			const createdUser = await User.create(user);
-			return createdUser;
+			if (!user.password) {
+				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING);
+			}
+			userToCreate.passwordHash = await authService.hashPassword(user.password);
+			return await User.create(userToCreate);
 		} catch (error) {
 			this.logger.error(error);
-			if (error.code === 11000) {
+			if (error instanceof ApiError) {
+				throw error;
+			} else if (error.code === 11000) {
 				throw new ApiError(ApiError.IDENTIFIER_TAKEN);
 			} else if (error.message && error.message.indexOf('is required') !== -1) {
 				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING, this.requiredFields);
@@ -50,8 +52,23 @@ class UserService extends CRUDService {
 	 */
 	async getUser (email) {
 		try {
-			const user = await User.findOne({ email });
-			return user;
+			return await User.findOne({ email });
+		} catch (error) {
+			this.logger.error(error);
+			throw new ApiError(ApiError.SERVICE_ERROR);
+		}
+	}
+
+	/**
+	 * Searches for users based on query.
+	 *
+	 * @param {object} query Search query
+	 * @returns {Promise<[User]>} Found users
+	 * @throws {ApiError} Cause of the failure
+	 */
+	async getUsers (query = {}) {
+		try {
+			return await User.find(query);
 		} catch (error) {
 			this.logger.error(error);
 			throw new ApiError(ApiError.SERVICE_ERROR);
@@ -67,10 +84,12 @@ class UserService extends CRUDService {
 	 * @throws {ApiError} Cause of the failure
 	 */
 	async updateUser (email, update) {
-		const sanitizedUpdate = this.sanitizeUpdate(update);
+		const sanitizedUpdate = this.removeReadonlyFields(update);
+		if (update.password) {
+			sanitizedUpdate.passwordHash = await authService.hashPassword(sanitizedUpdate.password);
+		}
 		try {
-			const updatedUser = await User.findOneAndUpdate({ email }, sanitizedUpdate, { new: true });
-			return updatedUser;
+			return await User.findOneAndUpdate({ email }, sanitizedUpdate, { new: true });
 		} catch (error) {
 			this.logger.error(error);
 			throw new ApiError(ApiError.SERVICE_ERROR);

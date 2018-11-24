@@ -4,50 +4,46 @@ const fs = require('fs');
 const path = require('path');
 const yargs = require('yargs');
 
-const endpointsDir = path.join(__dirname, './endpoints');
-const servicesDir = path.join(__dirname, './services');
+const { requester } = require('./suite');
 
-
-/**
- * Checks the --only arg and requires tests according to it.
- *
- * @return {boolean} Is set
- */
-function _only () {
-	const only = yargs.argv.only;
-	return only ? path.join(__dirname, yargs.argv.only) : null;
-}
+const packs = [
+	{
+		description: 'Integration Tests',
+		type: 'integration',
+	},
+];
 
 /**
- * Reads and requires all tests from a folder.
+ * Imports all tests from a specific library.
  *
- * @param {string} dir Directory path
+ * @param {string} directory Directory name
  * @returns {void}
  */
-function _requireTests (dir) {
-	return new Promise((resolve, reject) => {
-		fs.readdir(dir, (error, files) => {
-			if (error) {
-				reject(error);
-			}
-			files.forEach(file => {
-				require(path.join(dir, file));
-			});
-			resolve(true);
-		});
-	});
+function requireTests (directory) {
+	const dirPath = path.join(__dirname, directory);
+	const files = fs.readdirSync(dirPath);
+	for (const file of files) {
+		require(path.join(dirPath, file));
+	}
 }
 
-describe('Eodrin CMS API', () => {
-	it('Should say Hi!', done => done());
+describe('Eodrin API Tests', () => {
+	const onlyArg = yargs.argv.only;
+	const packArg = yargs.argv.pack;
 
-	require('./database');
-	const only = _only();
-	if (only) {
-		require(only);
+	after(() => {
+		requester.close();
+	});
+
+	if (onlyArg) {
+		require(path.join(__dirname, onlyArg));
 	} else {
-		describe('Services', async () => await _requireTests(servicesDir));
-		describe('Endpoints', async () => await _requireTests(endpointsDir));
+		for (const pack of packs) {
+			if (!packArg || packArg === pack.type) {
+				describe(pack.description, () => {
+					requireTests(pack.type);
+				});
+			}
+		}
 	}
-
 });
