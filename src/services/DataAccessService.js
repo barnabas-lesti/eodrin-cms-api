@@ -3,23 +3,12 @@ const Service = require('./Service');
 /**
  * API CRUD logic related service base class.
  */
-class CRUDService extends Service {
-	constructor (Model) {
+class DataAccessService extends Service {
+	constructor () {
 		super();
 
 		this.requiredFields = [];
 		this.readOnlyFields = [];
-
-		this._Model = Model;
-	}
-
-	/**
-	 * Returns the service Model.
-	 *
-	 * @returns {any} Service Model
-	 */
-	getModel () {
-		return this._Model;
 	}
 
 	/**
@@ -28,7 +17,7 @@ class CRUDService extends Service {
 	 * @param {any} update Update object candidate
 	 * @returns {any} Sanitized update object
 	 */
-	sanitizeUpdate (update) {
+	removeReadonlyFields (update) {
 		const sanitizedUpdate = {};
 		for (const fieldName in update) {
 			if (this.readOnlyFields.indexOf(fieldName) === -1) {
@@ -39,4 +28,4 @@ class CRUDService extends Service {
 	}
 }
 
-module.exports = CRUDService;
+module.exports = DataAccessService;
