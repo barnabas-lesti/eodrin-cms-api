@@ -7,15 +7,10 @@ const Post = require('./models/Post');
  */
 class PostService extends DataAccessService {
 	constructor () {
-		super(Post);
+		super();
 
-		this.requiredFields = [
-			'postId',
-			'postType',
-		];
-		this.readOnlyFields = [
-			'postId',
-		];
+		this.requiredFields = [ 'postId', 'postType' ];
+		this.readOnlyFields = [ 'postId' ];
 	}
 
 	/**
@@ -27,8 +22,7 @@ class PostService extends DataAccessService {
 	 */
 	async createPost (post) {
 		try {
-			const createdPost = await Post.create(post);
-			return createdPost;
+			return await Post.create(post);
 		} catch (error) {
 			this.logger.error(error);
 			if (error.code === 11000) {
@@ -44,14 +38,13 @@ class PostService extends DataAccessService {
 	/**
 	 * Searches for a post with the provided postId.
 	 *
-	 * @param {string} postId Post ID
+	 * @param {number} postId Post ID
 	 * @returns {Promise<Post>} Found post
 	 * @throws {ApiError} Cause of the failure
 	 */
 	async getPost (postId) {
 		try {
-			const post = await Post.findOne({ postId });
-			return post;
+			return await Post.findOne({ postId });
 		} catch (error) {
 			this.logger.error(error);
 			throw new ApiError(ApiError.SERVICE_ERROR);
@@ -67,8 +60,7 @@ class PostService extends DataAccessService {
 	 */
 	async getPosts (query) {
 		try {
-			const posts = await Post.find(query);
-			return posts;
+			return await Post.find(query);
 		} catch (error) {
 			this.logger.error(error);
 			throw new ApiError(ApiError.SERVICE_ERROR);
@@ -78,16 +70,15 @@ class PostService extends DataAccessService {
 	/**
 	 * Update the post with the provided data.
 	 *
-	 * @param {string} postId Post ID
+	 * @param {number} postId Post ID
 	 * @param {Post} update Updated post data
 	 * @returns {Promise<Post>} Updated post
 	 * @throws {ApiError} Cause of the failure
 	 */
 	async updatePost (postId, update) {
-		const sanitizedUpdate = this.sanitizeUpdate(update);
+		const sanitizedUpdate = this.removeReadonlyFields(update);
 		try {
-			const updatedPost = await Post.findOneAndUpdate({ postId }, sanitizedUpdate, { new: true });
-			return updatedPost;
+			return await Post.findOneAndUpdate({ postId }, sanitizedUpdate, { new: true });
 		} catch (error) {
 			this.logger.error(error);
 			throw new ApiError(ApiError.SERVICE_ERROR);
@@ -97,7 +88,7 @@ class PostService extends DataAccessService {
 	/**
 	 * Deletes a post based on the provided postId.
 	 *
-	 * @param {string} postId Post ID
+	 * @param {number} postId Post ID
 	 * @returns {Promise<true|null>} True if post was found, null if not
 	 * @throws {ApiError} Cause of the failure
 	 */
