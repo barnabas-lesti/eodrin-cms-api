@@ -1,7 +1,9 @@
+const ifUserIsNotLoggedIn = require('../common/ifUserIsNotLoggedIn');
 const { requester, expect } = require('../suite');
 
 const ApiError = require('../../src/ApiError');
 const database = require('../../src/database');
+const authService = require('../../src/services/authService');
 const User = require('../../src/services/models/User');
 const userService = require('../../src/services/userService');
 
@@ -24,9 +26,12 @@ describe('USERS', () => {
 		roles: [ User.Roles.ADMIN ],
 	};
 
+	let authToken;
+
 	beforeEach(async () => {
 		await database.clearCollection(User);
 		await userService.createUser(existingUser);
+		authToken = await authService.createAuthToken(existingUser.email);
 	});
 
 	afterEach(async () => {
@@ -37,6 +42,7 @@ describe('USERS', () => {
 		it('should: return the created user without the "passwordHash" field', done => {
 			requester
 				.post('/api/users')
+				.set('Authorization', `Bearer ${ authToken }`)
 				.send(newUser)
 				.end((err, res) => {
 					expect(err).to.equal(null);
@@ -49,9 +55,12 @@ describe('USERS', () => {
 				});
 		});
 
+		ifUserIsNotLoggedIn(requester.post('/api/users'));
+
 		it(`if identifier is taken: should: have status 400, "type" field with value "${ ApiError.IDENTIFIER_TAKEN }"`, done => {
 			requester
 				.post('/api/users')
+				.set('Authorization', `Bearer ${ authToken }`)
 				.send(existingUser)
 				.end((err, res) => {
 					expect(err).to.equal(null);
@@ -66,6 +75,7 @@ describe('USERS', () => {
 		it(`if required fields are missing: should: have status 400, "type" field with value "${ ApiError.REQUIRED_FIELDS_MISSING }"`, done => {
 			requester
 				.post('/api/users')
+				.set('Authorization', `Bearer ${ authToken }`)
 				.send(requiredFieldsMissingUser)
 				.end((err, res) => {
 					expect(err).to.equal(null);
@@ -82,6 +92,7 @@ describe('USERS', () => {
 		it('should: not encounter an error, have status 200, body be an array, contain 1 user', done => {
 			requester
 				.get('/api/users')
+				.set('Authorization', `Bearer ${ authToken }`)
 				.end((err, res) => {
 					expect(err).to.equal(null);
 					expect(res).to.have.status(200);
@@ -91,12 +102,15 @@ describe('USERS', () => {
 					done();
 				});
 		});
+
+		ifUserIsNotLoggedIn(requester.get('/api/users'));
 	});
 
 	describe('GET /api/users/:email', () => {
 		it('should: have status 200, not contain the "passwordHash" field', done => {
 			requester
 				.get(`/api/users/${ existingUser.email }`)
+				.set('Authorization', `Bearer ${ authToken }`)
 				.end((err, res) => {
 					expect(err).to.equal(null);
 					expect(res).to.have.status(200);
@@ -106,9 +120,12 @@ describe('USERS', () => {
 				});
 		});
 
+		ifUserIsNotLoggedIn(requester.get(`/api/users/${ existingUser.email }`));
+
 		it('if user was not found, should: have status 404', done => {
 			requester
 				.get(`/api/users/${ newUser.email }`)
+				.set('Authorization', `Bearer ${ authToken }`)
 				.end((err, res) => {
 					expect(res).to.have.status(404);
 					done();
@@ -120,6 +137,7 @@ describe('USERS', () => {
 		it('should: update the user, return the updated user without the "passwordHash" field', done => {
 			requester
 				.patch(`/api/users/${ existingUser.email }`)
+				.set('Authorization', `Bearer ${ authToken }`)
 				.send(updatedUser)
 				.end((err, res) => {
 					expect(err).to.equal(null);
@@ -133,9 +151,12 @@ describe('USERS', () => {
 				});
 		});
 
+		ifUserIsNotLoggedIn(requester.patch(`/api/users/${ existingUser.email }`));
+
 		it('if user was not found, should: have status 404', done => {
 			requester
 				.patch(`/api/users/${ newUser.email }`)
+				.set('Authorization', `Bearer ${ authToken }`)
 				.end((err, res) => {
 					expect(res).to.have.status(404);
 					done();
@@ -147,6 +168,7 @@ describe('USERS', () => {
 		it('should delete a user without any errors', done => {
 			requester
 				.delete(`/api/users/${ existingUser.email }`)
+				.set('Authorization', `Bearer ${ authToken }`)
 				.end((err, res) => {
 					expect(err).to.equal(null);
 					expect(res).to.not.equal(null);
@@ -155,9 +177,12 @@ describe('USERS', () => {
 				});
 		});
 
+		ifUserIsNotLoggedIn(requester.delete(`/api/users/${ existingUser.email }`));
+
 		it('if user was not found, should: have status 404', done => {
 			requester
 				.delete(`/api/users/${ newUser.email }`)
+				.set('Authorization', `Bearer ${ authToken }`)
 				.end((err, res) => {
 					expect(res).to.have.status(404);
 					done();

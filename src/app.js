@@ -9,6 +9,7 @@ const config = require('./config');
 const database = require('./database');
 const logger = require('./logger');
 
+const auth = require('./middlewares/auth');
 const responder = require('./middlewares/responder');
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(compression());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(auth.middleware());
 
 // Routes
 const routesDir = path.join(__dirname, 'routes');
