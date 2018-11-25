@@ -1,6 +1,6 @@
 const ApiError = require('../ApiError');
+const Post = require('../models/Post');
 const DataAccessService = require('./DataAccessService');
-const Post = require('./models/Post');
 
 /**
  * Post logic related service.

@@ -36,7 +36,7 @@ class Database {
 	}
 
 	/**
-	 * Removes all data from a collection.
+	 * Removes all data from a collection. (Should only be used for testing)
 	 *
 	 * @param {mongoose.Model} Model Collection to clear
 	 * @returns {Promise<Boolean>} Success state

@@ -2,8 +2,8 @@ const { requester, expect } = require('../suite');
 
 const ApiError = require('../../src/ApiError');
 const database = require('../../src/database');
+const User = require('../../src/models/User');
 const authService = require('../../src/services/authService');
-const User = require('../../src/services/models/User');
 const userService = require('../../src/services/userService');
 
 describe('AUTH', () => {

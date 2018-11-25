@@ -12,7 +12,9 @@ const logger = require('./logger');
 const authMiddleware = require('./middlewares/authMiddleware');
 const responderMiddleware = require('./middlewares/responderMiddleware');
 
+
 const app = express();
+logger.info(`Using config: "${ config.ENV }"`);
 
 // Before routes middlewares
 app.use(compression());
@@ -21,12 +23,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(authMiddleware());
 
-// Routes
+// Load routes
 const routesDir = path.join(__dirname, 'routes');
-// eslint-disable-next-line no-sync
+/* eslint-disable-next-line no-sync */
 const files = fs.readdirSync(routesDir);
 for (const file of files) {
-	app.use('/api', require(path.join(routesDir, file)));
+	const route = require(path.join(routesDir, file));
+	app.use('/api', route(express.Router()));
 }
 
 // After routes middlewares
