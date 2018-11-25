@@ -23,14 +23,21 @@ class ResponderMiddleware extends Middleware {
 			let responsePayload = data;
 
 			if (error) {
-				status = 500;
 				responsePayload = error;
-				if (
-					error.type === ApiError.IDENTIFIER_TAKEN
-					|| error.type === ApiError.REQUIRED_FIELDS_MISSING
-				) {
+				switch (error.type) {
+				case ApiError.IDENTIFIER_TAKEN:
 					status = 400;
+					break;
+				case ApiError.REQUIRED_FIELDS_MISSING:
+					status = 400;
+					break;
+				case ApiError.UNAUTHORIZED:
+					status = 401;
+					break;
+				default:
+					status = 500;
 				}
+
 			} else if (data) {
 				if (_.isArray(data)) {
 					const dataArray = [];
@@ -56,7 +63,8 @@ class ResponderMiddleware extends Middleware {
 	 * @returns {any} Reduced data
 	 */
 	_removeBlacklisted (data) {
-		const fields = _.without(_.keys(data.schema.paths), ...this._blacklist);
+		const paths = data.schema ? data.schema.paths : data;
+		const fields = _.without(_.keys(paths), ...this._blacklist);
 		return _.pick(data, ...fields);
 	}
 }

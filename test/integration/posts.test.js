@@ -5,7 +5,7 @@ const database = require('../../src/database');
 const Post = require('../../src/services/models/Post');
 const postService = require('../../src/services/postService');
 
-describe('USERS', () => {
+describe('POSTS', () => {
 	const existingPost = {
 		content: 'Initial content.',
 		postId: 1000,
