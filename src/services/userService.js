@@ -1,7 +1,7 @@
 const ApiError = require('../ApiError');
+const User = require('../models/User');
 const authService = require('./authService');
 const DataAccessService = require('./DataAccessService');
-const User = require('./models/User');
 
 /**
  * User logic related service.

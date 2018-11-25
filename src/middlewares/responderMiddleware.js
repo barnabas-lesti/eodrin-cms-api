@@ -63,6 +63,7 @@ function responderMiddleware () {
 		}
 
 		res.status(status).json(responsePayload);
+		return;
 	};
 }
 

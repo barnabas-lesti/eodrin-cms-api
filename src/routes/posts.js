@@ -1,62 +1,51 @@
-const express = require('express');
-
 const postService = require('../services/postService');
 
-const posts = express.Router();
+function posts (router) {
+	router.route('/posts')
+		.post(async (req, res, next) => {
+			try {
+				res.locals.data = await postService.createPost(req.body);
+			} catch (error) {
+				res.locals.error = error;
+			}
+			next();
+		})
+		.get(async (req, res, next) => {
+			try {
+				res.locals.data = await postService.getPosts();
+			} catch (error) {
+				res.locals.error = error;
+			}
+			next();
+		});
 
-posts.route('/posts')
-	.post((req, res, next) => {
-		postService.createPost(req.body)
-			.then(post => {
-				res.locals.data = post;
-				next();
-			})
-			.catch(error => {
+	router.route('/posts/:postId')
+		.get(async (req, res, next) => {
+			try {
+				res.locals.data = await postService.getPost(req.params.postId);
+			} catch (error) {
 				res.locals.error = error;
-				next();
-			});
-	})
-	.get((req, res, next) => {
-		postService.getPosts()
-			.then(posts => {
-				res.locals.data = posts;
-				next();
-			});
-	});
+			}
+			next();
+		})
+		.patch(async (req, res, next) => {
+			try {
+				res.locals.data = await postService.updatePost(req.params.postId, req.body);
+			} catch (error) {
+				res.locals.error = error;
+			}
+			next();
+		})
+		.delete(async (req, res, next) => {
+			try {
+				res.locals.data = await postService.deletePost(req.params.postId);
+			} catch (error) {
+				res.locals.error = error;
+			}
+			next();
+		});
 
-posts.route('/posts/:postId')
-	.get((req, res, next) => {
-		postService.getPost(req.params.postId)
-			.then(post => {
-				res.locals.data = post;
-				next();
-			})
-			.catch(error => {
-				res.locals.error = error;
-				next();
-			});
-	})
-	.patch((req, res, next) => {
-		postService.updatePost(req.params.postId, req.body)
-			.then(post => {
-				res.locals.data = post;
-				next();
-			})
-			.catch(error => {
-				res.locals.error = error;
-				next();
-			});
-	})
-	.delete((req, res, next) => {
-		postService.deletePost(req.params.postId)
-			.then(success => {
-				res.locals.data = success;
-				next();
-			})
-			.catch(error => {
-				res.locals.error = error;
-				next();
-			});
-	});
+	return router;
+}
 
 module.exports = posts;

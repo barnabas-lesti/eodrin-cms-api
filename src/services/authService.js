@@ -52,7 +52,7 @@ class AuthService extends Service {
 	}
 
 	/**
-	 * Verifies the token string and returns the decoded email or rejects the call.
+	 * Verifies the token string and returns the decoded email or null if token is invalid.
 	 *
 	 * @param {string} authToken JWT token
 	 * @returns {Promise<string|null>} Promise with the decoded email
