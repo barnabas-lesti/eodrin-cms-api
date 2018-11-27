@@ -8,8 +8,8 @@ const { requester } = require('./suite');
 
 const packs = [
 	{
-		description: 'Integration Tests',
-		type: 'integration',
+		description: 'Route Tests',
+		type: 'routes',
 	},
 ];
 

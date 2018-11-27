@@ -1,3 +1,4 @@
+const ifIdentifierIsTaken = require('../common/ifIdentifierIsTaken');
 const ifUserIsNotLoggedIn = require('../common/ifUserIsNotLoggedIn');
 const { requester, expect } = require('../suite');
 
@@ -55,21 +56,7 @@ describe('POSTS', () => {
 		});
 
 		ifUserIsNotLoggedIn(requester.post('/api/posts'));
-
-		it(`if identifier is taken: should: have status 400, "type" field with value "${ ApiError.IDENTIFIER_TAKEN }"`, done => {
-			requester
-				.post('/api/posts')
-				.set('Authorization', `Bearer ${ authToken }`)
-				.send(existingPost)
-				.end((err, res) => {
-					expect(err).to.equal(null);
-					expect(res).to.not.equal(null);
-					expect(res).to.have.status(400);
-					expect(res.body).to.be.an('object');
-					expect(res.body.type).to.equal(ApiError.IDENTIFIER_TAKEN);
-					done();
-				});
-		});
+		ifIdentifierIsTaken(requester.post('/api/posts'), existingPost, authToken);
 
 		it(`if required fields are missing: should: have status 400, "type" field with value "${ ApiError.REQUIRED_FIELDS_MISSING }"`, done => {
 			requester
