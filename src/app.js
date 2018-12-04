@@ -12,7 +12,6 @@ const logger = require('./logger');
 const authMiddleware = require('./middlewares/authMiddleware');
 const responderMiddleware = require('./middlewares/responderMiddleware');
 
-
 const app = express();
 logger.info(`Using config: "${ config.ENV }"`);
 

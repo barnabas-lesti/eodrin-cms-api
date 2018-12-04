@@ -36,42 +36,19 @@ class Database {
 	}
 
 	/**
-	 * Removes all data from a collection. (Should only be used for testing)
-	 *
-	 * @param {mongoose.Model} Model Collection to clear
-	 * @returns {Promise<Boolean>} Success state
-	 * @throws {Error} Cause of the failure
-	 */
-	clearCollection (Model) {
-		return new Promise((resolve, reject) => {
-			Model.deleteMany({}, error => {
-				if (error) {
-					reject(error);
-				}
-				resolve(true);
-			});
-		});
-	}
-
-	/**
 	 * Disconnects the client from the active connection if present.
 	 *
 	 * @returns {Promise<boolean>} Success state
 	 * @throws {Error} Cause of the failure
 	 */
-	disconnect () {
-		return new Promise((resolve, reject) => {
-			if (this._connection) {
-				this._connection.disconnect(error => {
-					if (error) {
-						reject(error);
-					}
-					resolve(true);
-				});
-			} else {
-				resolve(true);
-			}
-		});
+	async disconnect () {
+		try {
+			await this._connection.disconnect();
+			this._connection = undefined;
+			return true;
+		} catch (error) {
+			throw error;
+		}
 	}
 }
 

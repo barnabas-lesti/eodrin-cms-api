@@ -1,31 +1,32 @@
 const { requester, expect } = require('../suite');
 
 const ApiError = require('../../src/ApiError');
-const database = require('../../src/database');
 const User = require('../../src/models/User');
 const authService = require('../../src/services/authService');
 const userService = require('../../src/services/userService');
 
-describe('AUTH', () => {
-	const existingUser = {
+const authFixture = {
+	existingUser: {
 		email: 'test@mail.com',
 		password: 'password1234',
-	};
-	const notExistingUser = {
+	},
+	notExistingUser: {
 		email: 'notTest@mail.com',
 		password: '9876notPassword',
-	};
+	},
+};
 
+describe('AUTH', () => {
 	let validAuthToken;
 
 	beforeEach(async () => {
-		await database.clearCollection(User);
-		await userService.createUser(existingUser);
-		validAuthToken = await authService.createAuthToken(existingUser.email);
+		await User.deleteMany().exec();
+		await userService.createUser(authFixture.existingUser);
+		validAuthToken = await authService.createAuthToken(authFixture.existingUser.email);
 	});
 
 	afterEach(async () => {
-		await database.clearCollection(User);
+		await User.deleteMany().exec();
 	});
 
 	describe('POST /api/auth/login', () => {
@@ -33,15 +34,13 @@ describe('AUTH', () => {
 			requester
 				.post('/api/auth/login')
 				.send({
-					email: existingUser.email,
-					password: existingUser.password,
+					email: authFixture.existingUser.email,
+					password: authFixture.existingUser.password,
 				})
 				.end((err, res) => {
-					expect(err).to.equal(null);
-					expect(res).to.not.equal(null);
 					expect(res).to.have.status(200);
 					expect(res.body).to.be.an('object');
-					expect(res.body.email).to.equal(existingUser.email);
+					expect(res.body.email).to.equal(authFixture.existingUser.email);
 					expect(res.body.authToken).to.be.a('string');
 					done();
 				});
@@ -51,12 +50,10 @@ describe('AUTH', () => {
 			requester
 				.post('/api/auth/login')
 				.send({
-					email: existingUser.email,
-					password: notExistingUser.password,
+					email: authFixture.existingUser.email,
+					password: authFixture.notExistingUser.password,
 				})
 				.end((err, res) => {
-					expect(err).to.equal(null);
-					expect(res).to.not.equal(null);
 					expect(res).to.have.status(401);
 					expect(res.body).to.be.an('object');
 					expect(res.body.type).to.equal(ApiError.UNAUTHORIZED);
@@ -68,12 +65,10 @@ describe('AUTH', () => {
 			requester
 				.post('/api/auth/login')
 				.send({
-					email: notExistingUser.email,
-					password: notExistingUser.password,
+					email: authFixture.notExistingUser.email,
+					password: authFixture.notExistingUser.password,
 				})
 				.end((err, res) => {
-					expect(err).to.equal(null);
-					expect(res).to.not.equal(null);
 					expect(res).to.have.status(401);
 					expect(res.body).to.be.an('object');
 					expect(res.body.type).to.equal(ApiError.UNAUTHORIZED);
@@ -88,8 +83,6 @@ describe('AUTH', () => {
 					email: '',
 				})
 				.end((err, res) => {
-					expect(err).to.equal(null);
-					expect(res).to.not.equal(null);
 					expect(res).to.have.status(400);
 					expect(res.body).to.be.an('object');
 					expect(res.body.type).to.equal(ApiError.REQUIRED_FIELDS_MISSING);
@@ -107,7 +100,6 @@ describe('AUTH', () => {
 					authToken: validAuthToken,
 				})
 				.end((err, res) => {
-					expect(err).to.equal(null);
 					expect(res).to.have.status(200);
 					done();
 				});
@@ -120,8 +112,6 @@ describe('AUTH', () => {
 					authToken: 'someInvalidStuffHere',
 				})
 				.end((err, res) => {
-					expect(err).to.equal(null);
-					expect(res).to.not.equal(null);
 					expect(res).to.have.status(401);
 					expect(res.body).to.be.an('object');
 					expect(res.body.type).to.equal(ApiError.UNAUTHORIZED);
@@ -134,8 +124,6 @@ describe('AUTH', () => {
 				.post('/api/auth/verify')
 				.send({})
 				.end((err, res) => {
-					expect(err).to.equal(null);
-					expect(res).to.not.equal(null);
 					expect(res).to.have.status(400);
 					expect(res.body).to.be.an('object');
 					expect(res.body.type).to.equal(ApiError.REQUIRED_FIELDS_MISSING);
