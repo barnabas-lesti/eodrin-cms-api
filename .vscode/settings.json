@@ -1,6 +1,7 @@
 {
 	"editor.tabSize": 2,
-	"editor.insertSpaces": false,
+	"editor.insertSpaces": true,
 	"files.eol": "\n",
-	"eslint.enable": true
+	"eslint.enable": true,
+	"typescript.validate.enable": false
 }

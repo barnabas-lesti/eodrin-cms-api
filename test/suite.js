@@ -9,6 +9,6 @@ const { expect } = chai;
 const requester = chai.request(app).keepOpen();
 
 module.exports = {
-	expect,
-	requester,
+  expect,
+  requester,
 };

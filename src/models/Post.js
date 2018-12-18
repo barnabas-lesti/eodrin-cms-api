@@ -1,19 +1,19 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const Post = mongoose.model('Post', new mongoose.Schema({
-	content: String,
-	description: String,
-	keywords: Array,
-	postId: {
-		required: true,
-		type: Number,
-		unique: true,
-	},
-	postType: {
-		required: true,
-		type: String,
-	},
-	title: String,
+  content: String,
+  description: String,
+  keywords: Array,
+  postId: {
+    required: true,
+    type: Number,
+    unique: true,
+  },
+  postType: {
+    required: true,
+    type: String,
+  },
+  title: String,
 }));
 
-module.exports = Post;
+export default Post;
