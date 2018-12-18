@@ -1,19 +1,12 @@
-const ApiError = require('../ApiError');
+const ApiError = require('../common/ApiError');
 const User = require('../models/User');
 const authService = require('./authService');
-const DataAccessService = require('./DataAccessService');
+const Service = require('./Service');
 
 /**
  * User logic related service.
  */
-class UserService extends DataAccessService {
-	constructor () {
-		super();
-
-		this.readOnlyFields = [ 'email' ];
-		this.requiredFields = [ 'email', 'password' ];
-	}
-
+class UserService extends Service {
 	/**
 	 * Creates a new user and saves it in the database.
 	 *
@@ -36,7 +29,7 @@ class UserService extends DataAccessService {
 			} else if (error.code === 11000) {
 				throw new ApiError(ApiError.IDENTIFIER_TAKEN);
 			} else if (error.message && error.message.indexOf('is required') !== -1) {
-				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING, this.requiredFields);
+				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING);
 			} else {
 				throw new ApiError(ApiError.SERVICE_ERROR);
 			}
@@ -84,12 +77,11 @@ class UserService extends DataAccessService {
 	 * @throws {ApiError} Cause of the failure
 	 */
 	async updateUser (email, update) {
-		const sanitizedUpdate = this.removeReadonlyFields(update);
 		if (update.password) {
-			sanitizedUpdate.passwordHash = await authService.hashPassword(sanitizedUpdate.password);
+			update.passwordHash = await authService.hashPassword(update.password);
 		}
 		try {
-			return await User.findOneAndUpdate({ email }, sanitizedUpdate, { new: true });
+			return await User.findOneAndUpdate({ email }, update, { new: true });
 		} catch (error) {
 			this.logger.error(error);
 			throw new ApiError(ApiError.SERVICE_ERROR);

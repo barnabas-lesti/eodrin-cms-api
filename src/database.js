@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const ApiError = require('./ApiError');
-const config = require('./config');
-const logger = require('./logger');
+const ApiError = require('./common/ApiError');
+const config = require('./common/config');
+const logger = require('./common/logger');
 
 /**
  * Database logic handler.

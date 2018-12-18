@@ -1,18 +1,11 @@
-const ApiError = require('../ApiError');
+const ApiError = require('../common/ApiError');
 const Post = require('../models/Post');
-const DataAccessService = require('./DataAccessService');
+const Service = require('./Service');
 
 /**
  * Post logic related service.
  */
-class PostService extends DataAccessService {
-	constructor () {
-		super();
-
-		this.requiredFields = [ 'postId', 'postType' ];
-		this.readOnlyFields = [ 'postId' ];
-	}
-
+class PostService extends Service {
 	/**
 	 * Creates a new post and saves it in the database.
 	 *
@@ -28,7 +21,7 @@ class PostService extends DataAccessService {
 			if (error.code === 11000) {
 				throw new ApiError(ApiError.IDENTIFIER_TAKEN);
 			} else if (error.message && error.message.indexOf('is required') !== -1) {
-				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING, this.requiredFields);
+				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING);
 			} else {
 				throw new ApiError(ApiError.SERVICE_ERROR);
 			}
@@ -76,9 +69,8 @@ class PostService extends DataAccessService {
 	 * @throws {ApiError} Cause of the failure
 	 */
 	async updatePost (postId, update) {
-		const sanitizedUpdate = this.removeReadonlyFields(update);
 		try {
-			return await Post.findOneAndUpdate({ postId }, sanitizedUpdate, { new: true });
+			return await Post.findOneAndUpdate({ postId }, update, { new: true });
 		} catch (error) {
 			this.logger.error(error);
 			throw new ApiError(ApiError.SERVICE_ERROR);

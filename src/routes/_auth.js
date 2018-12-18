@@ -1,4 +1,4 @@
-const ApiError = require('../ApiError');
+const ApiError = require('../common/ApiError');
 const authService = require('../services/authService');
 const userService = require('../services/userService');
 

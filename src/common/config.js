@@ -1,7 +1,7 @@
 const path = require('path');
 // const yargs = require('yargs');
 
-const envDirPath = path.join(__dirname, '../env');
+const envDirPath = path.join(__dirname, '../../env');
 process.env.NODE_CONFIG_DIR = envDirPath;
 
 const configLib = require('config');

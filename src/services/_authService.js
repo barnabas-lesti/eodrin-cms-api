@@ -1,17 +1,10 @@
 const bcrypt = require('bcrypt');
-const jsonwebtoken = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-const config = require('../config');
-const Service = require('./service');
+const config = require('../common/config');
+const Service = require('./Service');
 
 class AuthService extends Service {
-	constructor () {
-		super();
-
-		this._bcrypt = bcrypt;
-		this._jwt = jsonwebtoken;
-	}
-
 	/**
 	 * Creates a hash from the provided password.
 	 *
@@ -19,7 +12,7 @@ class AuthService extends Service {
 	 * @returns {Promise<string>} Hashed password
 	 */
 	async hashPassword (password) {
-		return await this._bcrypt.hash(password, 10);
+		return await bcrypt.hash(password, 10);
 	}
 
 	/**
@@ -30,7 +23,7 @@ class AuthService extends Service {
 	 * @returns {Promise<boolean>} Promise containing the result boolean
 	 */
 	async verifyPassword (password, passwordHash) {
-		return await this._bcrypt.compare(password, passwordHash);
+		return await bcrypt.compare(password, passwordHash);
 	}
 
 	/**
@@ -41,7 +34,7 @@ class AuthService extends Service {
 	 */
 	createAuthToken (email) {
 		return new Promise(resolve => {
-			this._jwt.sign({ data: email }, config.SECRET, { expiresIn: config.AUTH_TOKEN_EXPIRATION }, (err, token) => {
+			jwt.sign({ data: email }, config.SECRET, { expiresIn: config.AUTH_TOKEN_EXPIRATION }, (err, token) => {
 				if (err) {
 					this.logger.error(err);
 					resolve(null);
@@ -59,7 +52,7 @@ class AuthService extends Service {
 	 */
 	verifyAuthToken (authToken) {
 		return new Promise(resolve => {
-			this._jwt.verify(authToken, config.SECRET, (err, decoded) => {
+			jwt.verify(authToken, config.SECRET, (err, decoded) => {
 				if (err) {
 					this.logger.error(err);
 					resolve(null);

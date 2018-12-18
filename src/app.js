@@ -5,11 +5,11 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 
-const config = require('./config');
+const config = require('./common/config');
+const logger = require('./common/logger');
 const database = require('./database');
-const logger = require('./logger');
 
-const authMiddleware = require('./middlewares/authMiddleware');
+// const authMiddleware = require('./middlewares/authMiddleware');
 const responderMiddleware = require('./middlewares/responderMiddleware');
 
 
@@ -21,15 +21,17 @@ app.use(compression());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(authMiddleware());
+// app.use(authMiddleware());
 
 // Load routes
 const routesDir = path.join(__dirname, 'routes');
 /* eslint-disable-next-line no-sync */
 const files = fs.readdirSync(routesDir);
-for (const file of files) {
-	const route = require(path.join(routesDir, file));
-	app.use('/api', route(express.Router()));
+for (const fileName of files) {
+	if (fileName[0] !== '_') {
+		const route = require(path.join(routesDir, fileName));
+		app.use('/api', route(express.Router()));
+	}
 }
 
 // After routes middlewares
