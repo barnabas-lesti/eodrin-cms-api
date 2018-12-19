@@ -1,0 +1,13 @@
+{
+	"common": {
+		"ENV": "default",
+		"PORT": 8080
+	},
+	"db": {
+		"MONGO_URI": "mongodb://admin:admin@127.0.0.1:27017/eodrin"
+	},
+	"auth": {
+		"TOKEN_EXPIRATION": "48h",
+		"SECRET": "defaultAppSecret1234"
+	}
+}

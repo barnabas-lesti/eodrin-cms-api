@@ -1,5 +1,3 @@
-const ApiError = require('../common/ApiError');
-
 /**
  * Responds to the client based on the response locals payload.
  *
@@ -9,25 +7,15 @@ function responderMiddleware () {
 	return (req, res) => {
 		const { data, error } = res.locals;
 
-		let status = 200;
-		let responsePayload = data;
+		let responsePayload;
+		let status;
 
 		if (error) {
 			responsePayload = error;
-			switch (error.type) {
-			case ApiError.IDENTIFIER_TAKEN:
-				status = 400;
-				break;
-			case ApiError.REQUIRED_FIELDS_MISSING:
-				status = 400;
-				break;
-			case ApiError.UNAUTHORIZED:
-				status = 401;
-				break;
-			default:
-				status = 500;
-			}
-
+			status = 500;
+		} else if (data !== undefined) {
+			responsePayload = data;
+			status = 200;
 		} else {
 			status = 404;
 		}

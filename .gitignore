@@ -1,3 +1,4 @@
 /node_modules
-/env/local.yaml
+
+/env/local.json
 yarn-error.log

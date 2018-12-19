@@ -46,7 +46,7 @@ class Logger {
 	 * @returns {void}
 	 */
 	_log (type, ...args) {
-		if (config.ENV !== 'test') {
+		if (config.common.ENV !== 'test') {
 			switch (type) {
 			case 'error':
 				this.console.error(...args);
