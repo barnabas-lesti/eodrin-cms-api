@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const ApiError = require('./ApiError');
-const config = require('./config');
-const logger = require('./logger');
+const ApiError = require('./common/ApiError');
+const config = require('./common/config');
+const logger = require('./common/logger');
 
 /**
  * Database logic handler.
@@ -26,9 +26,14 @@ class Database {
 	 */
 	async connect () {
 		try {
-			this._connection = await this._mongoose.connect(config.MONGO_URI);
-			this._logger.info('Connected to database');
-			return true;
+			if (config.db.MONGO_URI) {
+				this._connection = await this._mongoose.connect(config.db.MONGO_URI);
+				this._logger.info('Connected to database');
+				return true;
+			} else {
+				this._logger.info('"config.db.MONGO_URI" not set, skipping database connection');
+				return true;
+			}
 		} catch (error) {
 			this._logger.error(error);
 			throw new ApiError(ApiError.DATABASE_ERROR);

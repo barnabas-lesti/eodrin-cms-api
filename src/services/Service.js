@@ -1,9 +1,3 @@
-const logger = require('../logger');
-
-class Service {
-	constructor () {
-		this.logger = logger;
-	}
-}
+class Service {}
 
 module.exports = Service;

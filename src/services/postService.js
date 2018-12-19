@@ -1,40 +1,10 @@
-const ApiError = require('../ApiError');
-const Post = require('../models/Post');
-const DataAccessService = require('./DataAccessService');
+// const ApiError = require('../common/ApiError');
+const Service = require('./Service');
 
 /**
  * Post logic related service.
  */
-class PostService extends DataAccessService {
-	constructor () {
-		super();
-
-		this.requiredFields = [ 'postId', 'postType' ];
-		this.readOnlyFields = [ 'postId' ];
-	}
-
-	/**
-	 * Creates a new post and saves it in the database.
-	 *
-	 * @param {Post} post Post to save
-	 * @returns {Promise<Post>} Created post
-	 * @throws {ApiError} Cause of the failure
-	 */
-	async createPost (post) {
-		try {
-			return await Post.create(post);
-		} catch (error) {
-			this.logger.error(error);
-			if (error.code === 11000) {
-				throw new ApiError(ApiError.IDENTIFIER_TAKEN);
-			} else if (error.message && error.message.indexOf('is required') !== -1) {
-				throw new ApiError(ApiError.REQUIRED_FIELDS_MISSING, this.requiredFields);
-			} else {
-				throw new ApiError(ApiError.SERVICE_ERROR);
-			}
-		}
-	}
-
+class PostService extends Service {
 	/**
 	 * Searches for a post with the provided postId.
 	 *
@@ -42,13 +12,9 @@ class PostService extends DataAccessService {
 	 * @returns {Promise<Post>} Found post
 	 * @throws {ApiError} Cause of the failure
 	 */
-	async getPost (postId) {
-		try {
-			return await Post.findOne({ postId });
-		} catch (error) {
-			this.logger.error(error);
-			throw new ApiError(ApiError.SERVICE_ERROR);
-		}
+	async getPost (/* postId */) {
+		// TODO: implement changes
+		return null;
 	}
 
 	/**
@@ -58,48 +24,9 @@ class PostService extends DataAccessService {
 	 * @returns {Promise<[Post]>} Found posts
 	 * @throws {ApiError} Cause of the failure
 	 */
-	async getPosts (query) {
-		try {
-			return await Post.find(query);
-		} catch (error) {
-			this.logger.error(error);
-			throw new ApiError(ApiError.SERVICE_ERROR);
-		}
-	}
-
-	/**
-	 * Update the post with the provided data.
-	 *
-	 * @param {number} postId Post ID
-	 * @param {Post} update Updated post data
-	 * @returns {Promise<Post>} Updated post
-	 * @throws {ApiError} Cause of the failure
-	 */
-	async updatePost (postId, update) {
-		const sanitizedUpdate = this.removeReadonlyFields(update);
-		try {
-			return await Post.findOneAndUpdate({ postId }, sanitizedUpdate, { new: true });
-		} catch (error) {
-			this.logger.error(error);
-			throw new ApiError(ApiError.SERVICE_ERROR);
-		}
-	}
-
-	/**
-	 * Deletes a post based on the provided postId.
-	 *
-	 * @param {number} postId Post ID
-	 * @returns {Promise<true|null>} True if post was found, null if not
-	 * @throws {ApiError} Cause of the failure
-	 */
-	async deletePost (postId) {
-		try {
-			const result = await Post.findOneAndDelete({ postId });
-			return result !== null ? true : null;
-		} catch (error) {
-			this.logger.error(error);
-			throw new ApiError(ApiError.SERVICE_ERROR);
-		}
+	async getPosts (/* query */) {
+		// TODO: implement changes
+		return null;
 	}
 }
 

@@ -121,10 +121,10 @@ async connect() {
 
 	logService.info('Connecting to database...');
 	try {
-		await mongoose.connect(config.MONGO_URI, options);
+		await mongoose.connect(config.db.MONGO_URI, options);
 		logService.info('Connected to database');
 	} catch (error) {
-		logService.error(`Could not connect to database with URI: "${config.MONGO_URI}"`);
+		logService.error(`Could not connect to database with URI: "${config.db.MONGO_URI}"`);
 	}
 }
 ```
