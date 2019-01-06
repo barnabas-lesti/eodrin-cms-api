@@ -1,34 +1,33 @@
 {
-  "name": "eodrin-cms-api",
-  "version": "1.0.0",
-  "description": "Backend API for Eodrin CMS",
-  "main": "./src/main.js",
-  "scripts": {
-    "serve": "nodemon ./src/app.js -e js --ignore ./test --env=local",
-    "lint": "eslint ./**/*.js",
-    "test": "mocha ./test/main.js --exit"
-  },
-  "author": "Barnabas Lesti <barnabas.lesti@gmail.com>",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^3.0.2",
-    "body-parser": "^1.18.3",
-    "compression": "^1.7.3",
-    "config": "^2.0.1",
-    "cors": "^2.8.5",
-    "express": "^4.16.4",
-    "jsonwebtoken": "^8.4.0",
-    "mongoose": "^5.3.13",
-    "yargs": "^12.0.2"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-http": "^4.2.0",
-    "eslint": "^5.9.0",
-    "eslint-config-recommended": "^4.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-sort-requires-by-path": "^1.0.2",
-    "mocha": "^5.2.0",
-    "nodemon": "^1.18.4"
-  }
+	"name": "eodrin-cms-api",
+	"version": "1.0.0",
+	"description": "Backend API for Eodrin CMS",
+	"main": "./src/app.js",
+	"scripts": {
+		"start:local": "nodemon ./src/app.js -e js,json --ignore ./test --env=local",
+		"lint": "eslint ./**/*.js",
+		"test": "mocha ./test/main.js --exit"
+	},
+	"author": "Barnabas Lesti <barnabas.lesti@gmail.com>",
+	"license": "ISC",
+	"dependencies": {
+		"body-parser": "^1.18.3",
+		"compression": "^1.7.3",
+		"config": "^2.0.1",
+		"cors": "^2.8.5",
+		"express": "^4.16.4",
+		"fs-extra": "^7.0.1",
+		"mongoose": "^5.3.13",
+		"yargs": "^12.0.2"
+	},
+	"devDependencies": {
+		"chai": "^4.2.0",
+		"chai-http": "^4.2.0",
+		"eslint": "^5.9.0",
+		"eslint-config-recommended": "^4.0.0",
+		"eslint-plugin-import": "^2.14.0",
+		"eslint-plugin-sort-requires-by-path": "^1.0.2",
+		"mocha": "^5.2.0",
+		"nodemon": "^1.18.4"
+	}
 }

@@ -2,15 +2,13 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const cors = require('cors');
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
+
+const database = require('./database');
+const routes = require('./routes');
 
 const config = require('./common/config');
 const logger = require('./common/logger');
-const database = require('./database');
-
-const responderMiddleware = require('./middlewares/responderMiddleware');
-
+const responder = require('./middlewares/responder');
 
 const app = express();
 logger.info(`Using config: "${ config.common.ENV }"`);
@@ -21,19 +19,13 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Load routes
-const routesDir = path.join(__dirname, 'routes');
-/* eslint-disable-next-line no-sync */
-const files = fs.readdirSync(routesDir);
-for (const fileName of files) {
-	if (fileName.endsWith('.js') && fileName[0] !== '_') {
-		const route = require(path.join(routesDir, fileName));
-		app.use('/api', route(express.Router()));
-	}
+// Setting up routes
+for (const route of routes) {
+	app.use('/api', route(express.Router()));
 }
 
 // After routes middlewares
-app.use(responderMiddleware());
+app.use(responder());
 
 // Connecting to the database and starting the server
 database.connect();

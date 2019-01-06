@@ -1,4 +1,3 @@
-class Utils {}
+const utils = {};
 
-const utils = new Utils();
 module.exports = utils;

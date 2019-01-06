@@ -19,8 +19,10 @@ const config = {
 		ENV: configLib.get('common.ENV'),
 		PORT: configLib.get('common.PORT'),
 	},
-	db: {
-		MONGO_URI: configLib.get('db.MONGO_URI'),
+	dataStore: {
+		BUCKET_PATH: configLib.get('dataStore.BUCKET_PATH'),
+		BUCKET_URI: configLib.get('dataStore.BUCKET_URI'),
+		MONGO_URI: configLib.get('dataStore.MONGO_URI'),
 	},
 };
 

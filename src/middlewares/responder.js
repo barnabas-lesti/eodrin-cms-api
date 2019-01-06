@@ -3,7 +3,7 @@
  *
  * @return {void}
  */
-function responderMiddleware () {
+function responder () {
 	return (req, res) => {
 		const { data, error } = res.locals;
 
@@ -25,4 +25,4 @@ function responderMiddleware () {
 	};
 }
 
-module.exports = responderMiddleware;
+module.exports = responder;
