@@ -1,5 +1,6 @@
 /node_modules
 /bucket
+/build
 
 /env/local.json
 yarn-error.log

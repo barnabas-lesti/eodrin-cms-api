@@ -1,4 +1,4 @@
-const config = require('./config');
+import config from './config';
 
 /**
  * API logger.
@@ -62,4 +62,4 @@ class Logger {
 }
 
 const logger = new Logger();
-module.exports = logger;
+export default logger;

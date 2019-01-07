@@ -1,7 +1,8 @@
-const path = require('path');
+import appRootPath from 'app-root-path';
+import path from 'path';
 // const yargs = require('yargs');
 
-const envDirPath = path.join(__dirname, '../../env');
+const envDirPath = path.resolve(appRootPath.path, 'env');
 process.env.NODE_CONFIG_DIR = envDirPath;
 // process.env.NODE_ENV = yargs.argv.env || process.env.NODE_ENV;
 
@@ -26,4 +27,4 @@ const config = {
 	},
 };
 
-module.exports = config;
+export default config;

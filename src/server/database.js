@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const ApiError = require('./common/ApiError');
-const config = require('./common/config');
-const logger = require('./common/logger');
+import ApiError from './common/ApiError';
+import config from './common/config';
+import logger from './common/logger';
 
 /**
  * Database logic handler.
@@ -63,4 +63,4 @@ class Database {
 }
 
 const database = new Database();
-module.exports = database;
+export default database;

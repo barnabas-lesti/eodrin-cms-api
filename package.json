@@ -1,16 +1,18 @@
 {
-	"name": "eodrin-cms-api",
+	"name": "eodrin-cms",
 	"version": "1.0.0",
-	"description": "Backend API for Eodrin CMS",
-	"main": "./src/app.js",
+	"description": "Eodrin CMS",
+	"main": "./server.js",
 	"scripts": {
-		"start:local": "nodemon ./src/app.js -e js,json --ignore ./test --env=local",
+		"start:local": "nodemon --watch ./build ./build/server.js --env=local",
+		"watch": "webpack --mode=development --watch",
 		"lint": "eslint ./**/*.js",
 		"test": "mocha ./test/main.js --exit"
 	},
 	"author": "Barnabas Lesti <barnabas.lesti@gmail.com>",
 	"license": "ISC",
 	"dependencies": {
+		"app-root-path": "^2.1.0",
 		"body-parser": "^1.18.3",
 		"compression": "^1.7.3",
 		"config": "^2.0.1",
@@ -18,16 +20,27 @@
 		"express": "^4.16.4",
 		"fs-extra": "^7.0.1",
 		"mongoose": "^5.3.13",
+		"react": "^16.6.3",
+		"react-dom": "^16.6.3",
+		"react-router-dom": "^4.3.1",
 		"yargs": "^12.0.2"
 	},
 	"devDependencies": {
-		"chai": "^4.2.0",
-		"chai-http": "^4.2.0",
-		"eslint": "^5.9.0",
+		"@babel/core": "^7.2.2",
+		"@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+		"@babel/polyfill": "^7.2.5",
+		"@babel/preset-env": "^7.2.0",
+		"@babel/preset-react": "^7.0.0",
+		"babel-loader": "^8.0.4",
+		"css-loader": "^2.0.1",
+		"eslint": "^5.10.0",
 		"eslint-config-recommended": "^4.0.0",
-		"eslint-plugin-import": "^2.14.0",
-		"eslint-plugin-sort-requires-by-path": "^1.0.2",
-		"mocha": "^5.2.0",
-		"nodemon": "^1.18.4"
+		"eslint-plugin-react": "^7.11.1",
+		"node-sass": "^4.11.0",
+		"nodemon": "^1.18.9",
+		"sass-loader": "^7.1.0",
+		"webpack": "^4.28.0",
+		"webpack-cli": "^3.1.2",
+		"webpack-node-externals": "^1.7.2"
 	}
 }

@@ -1,6 +1,6 @@
-const contentService = require('../services/contentService');
+import contentService from '../../services/contentService';
 
-function pages (router) {
+export default function pages (router) {
 	router.route('/pages')
 		.get(async (req, res, next) => {
 			try {
@@ -14,5 +14,3 @@ function pages (router) {
 
 	return router;
 }
-
-module.exports = pages;

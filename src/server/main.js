@@ -1,14 +1,15 @@
-const bodyParser = require('body-parser');
-const compression = require('compression');
-const cors = require('cors');
-const express = require('express');
+import bodyParser from 'body-parser';
+import compression from 'compression';
+import cors from 'cors';
+import express from 'express';
 
-const database = require('./database');
-const routes = require('./routes');
+import database from './database';
+import apiRoutes from './routes/api';
+import viewRoutes from './routes/view';
 
-const config = require('./common/config');
-const logger = require('./common/logger');
-const responder = require('./middlewares/responder');
+import config from './common/config';
+import logger from './common/logger';
+import responder from './middlewares/responder';
 
 const app = express();
 logger.info(`Using config: "${ config.common.ENV }"`);
@@ -19,9 +20,14 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Setting up routes
-for (const route of routes) {
+// API routes
+for (const route of apiRoutes) {
 	app.use('/api', route(express.Router()));
+}
+
+// View routes
+for (const route of viewRoutes) {
+	app.use('/v', route(express.Router()));
 }
 
 // After routes middlewares
@@ -34,4 +40,4 @@ const server = app.listen(config.common.PORT, () => {
 	logger.info(`API Server started: ${ address + port }`);
 });
 
-module.exports = app;
+export default app;

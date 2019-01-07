@@ -1,9 +1,9 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'path';
 
-const ApiError = require('../common/ApiError');
-const config = require('../common/config');
-const Service = require('./Service');
+import ApiError from '../common/ApiError';
+import config from '../common/config';
+import Service from './Service';
 
 const PAGES_BUCKET_PATH = path.join(config.dataStore.BUCKET_PATH, 'pages');
 
@@ -82,4 +82,4 @@ class ContentService extends Service {
 }
 
 const contentService = new ContentService();
-module.exports = contentService;
+export default contentService;

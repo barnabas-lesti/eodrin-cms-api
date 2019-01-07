@@ -13,4 +13,4 @@ class ApiError extends Error {
 ApiError.SERVICE_ERROR = 'SERVICE_ERROR';
 ApiError.DATABASE_ERROR = 'DATABASE_ERROR';
 
-module.exports = ApiError;
+export default ApiError;

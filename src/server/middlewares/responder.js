@@ -3,7 +3,7 @@
  *
  * @return {void}
  */
-function responder () {
+export default function responder () {
 	return (req, res) => {
 		const { data, error } = res.locals;
 
@@ -24,5 +24,3 @@ function responder () {
 		return;
 	};
 }
-
-module.exports = responder;
