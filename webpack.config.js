@@ -2,7 +2,10 @@ var path = require('path');
 var nodeExternals = require('webpack-node-externals');
 
 var browserConfig = {
-	entry: './src/client/main.js',
+	entry: [
+		'./src/client/main.js',
+		'./src/client/main.scss',
+	],
 	output: {
 		path: path.join(__dirname, 'build/assets'),
 		filename: 'client.js',
@@ -12,11 +15,20 @@ var browserConfig = {
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
+				query: {
+					compact: false,
+				},
 			},
 			{
 				test: /\.scss$/,
 				use: [
-					'style-loader',
+					{
+						loader: 'file-loader',
+						options: {
+							name: 'client.css',
+						},
+					},
+					'extract-loader',
 					'css-loader',
 					'sass-loader',
 				],

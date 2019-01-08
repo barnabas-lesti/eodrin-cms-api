@@ -1,8 +1,8 @@
-import fs from 'fs-extra';
 import path from 'path';
+import fsExtra from 'fs-extra';
 
-import ApiError from '../common/ApiError';
 import config from '../common/config';
+import logger from '../common/logger';
 import Service from './Service';
 
 const PAGES_BUCKET_PATH = path.join(config.dataStore.BUCKET_PATH, 'pages');
@@ -23,7 +23,27 @@ class ContentService extends Service {
 			const page = await this._fetchPage(pagePath);
 			return page;
 		} catch (error) {
-			throw new ApiError(ApiError.SERVICE_ERROR);
+			logger.error(error);
+		}
+	}
+
+	/**
+	 * Retrieves global settings for the application.
+	 * @returns {Object} Settings object
+	 */
+	async getSettings () {
+		const settingsJsonPath = `${ config.dataStore.BUCKET_PATH }/settings.json`;
+		try {
+			const settings = {
+				baseHref: config.common.VIEW_PATH,
+				...JSON.parse(await fsExtra.readFile(settingsJsonPath, 'utf-8')),
+			};
+			return settings;
+		} catch (error) {
+			if (error.code !== 'ENOENT') {
+				logger.error(error);
+			}
+			return null;
 		}
 	}
 
@@ -41,24 +61,25 @@ class ContentService extends Service {
 		const pageFilesPath = path.join(pageFullPath, pageId);
 		try {
 			const [ mdContent, rawMetaData, subPages ] = await Promise.all([
-				fs.readFile(`${ pageFilesPath }.md`, 'utf-8'),
-				fs.readFile(`${ pageFilesPath }.json`, 'utf-8'),
+				fsExtra.readFile(`${ pageFilesPath }.md`, 'utf-8'),
+				fsExtra.readFile(`${ pageFilesPath }.json`, 'utf-8'),
 				!options.dontGetSubPages ? this._fetchSubPages(pagePath) : Promise.resolve(),
 			]);
 			const content = mdContent;
 			const metaData = JSON.parse(rawMetaData);
 
 			const page = {
+				pagePath: pagePath.replace(/\\/g, '/'),
 				content,
 				subPages,
 				...metaData,
 			};
 			return page;
 		} catch (error) {
-			if (error.code === 'ENOENT') {
-				return null;
+			if (!error.code === 'ENOENT') {
+				logger.error(error);
 			}
-			throw new ApiError(ApiError.SERVICE_ERROR);
+			return null;
 		}
 	}
 
@@ -70,7 +91,7 @@ class ContentService extends Service {
 	 */
 	async _fetchSubPages (pagePath) {
 		const pageFullPath = path.join(PAGES_BUCKET_PATH, pagePath);
-		const subPageIds = (await fs.readdir(pageFullPath)).filter(item => !(item.endsWith('.md') || item.endsWith('.json')));
+		const subPageIds = (await fsExtra.readdir(pageFullPath)).filter(item => !(item.endsWith('.md') || item.endsWith('.json')));
 		const subPagePromises = [];
 		for (const subPageId of subPageIds) {
 			const subPagePath = path.join(pagePath, subPageId);

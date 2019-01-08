@@ -1,0 +1,14 @@
+@mixin threeInARow {
+	box-sizing: border-box;
+	float: left;
+	overflow: hidden;
+	width: calc(100% / 3);
+}
+
+@mixin clearfix {
+	&::after {
+		clear: both;
+		content: '';
+		display: table;
+	}
+}

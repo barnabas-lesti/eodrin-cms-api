@@ -1,0 +1,40 @@
+.PostCard {
+	$_defaultColor: #000000;
+	$_ctaColor: $color_link2;
+	$_ctaColor-hover: $color_link2-hover;
+	$_borderColor: rgba(5, 45, 73, .07);
+
+	border: 2px solid $_borderColor;
+	color: $_defaultColor;
+	display: block;
+	margin-bottom: 1rem;
+	padding: 1rem;
+
+	&_cta {
+		color: $_ctaColor;
+		transition: color ease .3s;
+	}
+
+	&_title {
+		font-size: 1.3rem;
+		margin: 0 0 .5rem;
+	}
+
+	&_description {
+		font-size: .9rem;
+		font-weight: 500;
+		margin: 0 0 1rem;
+	}
+
+	&:hover {
+		color: $_defaultColor;
+
+		.postCard_cta {
+			color: $_ctaColor-hover;
+		}
+	}
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+}

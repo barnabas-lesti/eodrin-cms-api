@@ -1,0 +1,61 @@
+.Footer {
+	$_bgColor: #ffffff;
+	$_boxShadow: rgba(5, 45, 73, .07) 0 -2px 0 0;
+
+	background-color: $_bgColor;
+	box-shadow: $_boxShadow;
+	text-align: center;
+
+	&_links {
+		list-style-type: none;
+		margin: 0;
+		padding: 1rem 0;
+
+		li {
+			padding: .5rem 1rem;
+		}
+	}
+
+	&_social {
+		margin: 0 0 1rem;
+
+		a {
+			display: inline-block;
+			margin: 0 1rem;
+		}
+
+		img {
+			width: 3rem;
+		}
+	}
+
+	@media screen and (min-width: $layout_mdMin) {
+		padding: 2rem 0;
+		text-align: left;
+
+		&_links {
+			margin-bottom: 1rem;
+			padding: 0;
+
+			li {
+				display: inline-block;
+				margin-right: 1rem;
+				padding: 0;
+			}
+		}
+
+		&_social {
+			a {
+				margin: 0 1rem 0 0;
+			}
+
+			img {
+				width: 2rem;
+			}
+		}
+
+		&_rights {
+			margin-bottom: 0;
+		}
+	}
+}

@@ -22,7 +22,8 @@ app.use(bodyParser.json());
 
 app.use('/assets', [
   express.static('assets'),
-  express.static('build/assets'),
+	express.static('build/assets'),
+	express.static(`${ config.dataStore.BUCKET_PATH }/assets`),
 ]);
 
 // API routes
@@ -32,7 +33,7 @@ for (const route of apiRoutes) {
 
 // View routes
 for (const route of viewRoutes) {
-	app.use('/v', route(express.Router()));
+	app.use(config.common.VIEW_PATH, route(express.Router()));
 }
 
 // After routes middlewares

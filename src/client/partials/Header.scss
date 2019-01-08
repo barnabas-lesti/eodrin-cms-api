@@ -1,0 +1,82 @@
+.Header {
+	@include clearfix;
+
+	$_bgColor: #ffffff;
+	$_boxShadow: rgba(5, 45, 73, .07) 0 2px 0 0;
+	$_menuIconColor: $color_link;
+	$_height: 50px;
+	$_logoWidth: 7rem;
+
+	background-color: $_bgColor;
+	box-shadow: $_boxShadow;
+	height: $_height;
+	position: relative;
+
+	&_logo {
+		display: inline-block;
+		font-size: 0;
+		left: 0;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+
+		img {
+			width: $_logoWidth;
+		}
+	}
+
+	&_icon {
+		padding: .75rem;
+		position: absolute;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+
+		.icon {
+			color: $_menuIconColor;
+			font-size: 1.5rem;
+		}
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	&_links {
+		background-color: $_bgColor;
+		height: 100%;
+		left: 0;
+		list-style-type: none;
+		margin: 0;
+		padding: 2rem 0;
+		position: fixed;
+		text-align: center;
+		top: $_height;
+		width: 100%;
+
+		li {
+			padding: 1rem;
+		}
+	}
+
+	@media screen and (min-width: $layout_mdMin) {
+		height: auto;
+		min-height: $_height;
+
+		&_icon {
+			display: none;
+		}
+
+		&_links {
+			float: right;
+			padding: 0;
+			position: static;
+			text-align: right;
+			width: calc(100% - #{$_logoWidth});
+
+			li {
+				display: inline-block;
+			}
+		}
+	}
+}

@@ -8,18 +8,48 @@ import App from '../../../client/App';
 export default function root (router) {
 	router.route('**')
 		.get(async (req, res, next) => {
-			const pageData = await contentService.getPage(req.path);
-			const template = pageData !== null ? pageData.pageTemplate : 'NotFoundTemplate';
+			const [ page, settings ] = await Promise.all([
+				contentService.getPage(req.path),
+				contentService.getSettings(),
+			]);
+
 			const initialData = {
-				template,
+				page,
+				settings,
 			};
-			const content = renderToString(<App template={template} />);
+			const content = renderToString(
+				<App initialData={initialData} />
+			);
+
+			let meta;
+			if (page !== null) {
+				const { title, description, keywords } = page;
+				meta = {
+					title,
+					description,
+					keywords,
+				};
+			} else {
+				meta = {
+					title: 'Page not found'
+				};
+			}
 
 			res.locals.view = `
 				<!DOCTYPE html>
-				<html>
+				<html lang="en">
 					<head>
-						<title>SSR with RR</title>
+						<meta charset="utf-8">
+						<meta name="viewport" content="width=device-width, initial-scale=1">
+						${meta.description ? '<meta name="description" content="' + meta.description + '">' : ''}
+						${meta.keywords ? '<meta name="keywords" content="' + meta.keywords.join(', ') + '">' : ''}
+						<title>${meta.title}</title>
+
+						<link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+						<link rel="stylesheet" type="text/css" href="/assets/client.css">
+
+						<base href="${settings.baseHref}">
+
 						<script src="/assets/client.js" defer></script>
 						<script>window.__INITIAL_DATA__ = ${JSON.stringify(initialData)};</script>
 					</head>

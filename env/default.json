@@ -5,7 +5,8 @@
 	},
 	"common": {
 		"ENV": "default",
-		"PORT": 8080
+		"PORT": 8080,
+		"VIEW_PATH": "/v"
 	},
 	"dataStore": {
 		"BUCKET_PATH": null,
