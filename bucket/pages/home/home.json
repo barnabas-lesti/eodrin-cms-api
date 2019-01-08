@@ -2,5 +2,5 @@
 	"description": "Home page description for SEO and other stuff.",
 	"title:": "Eodrin home page",
 	"keywords": [ "home", "home page", "eodrin cms" ],
-	"pageTemplate": "SimplePageTemplate"
+	"pageTemplate": "BasicTemplate"
 }

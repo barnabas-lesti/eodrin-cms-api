@@ -5,22 +5,17 @@
  */
 export default function responder () {
 	return (req, res) => {
-		const { data, error } = res.locals;
-
-		let responsePayload;
-		let status;
+		const { data, error, view } = res.locals;
 
 		if (error) {
-			responsePayload = error;
-			status = 500;
-		} else if (data !== undefined) {
-			responsePayload = data;
-			status = 200;
+			res.status(500).json(error);
+		} else if (view) {
+			res.send(view);
+		} else if (data) {
+			res.status(200).json(data);
 		} else {
-			status = 404;
+			res.status(404).json();
 		}
-
-		res.status(status).json(responsePayload);
 		return;
 	};
 }

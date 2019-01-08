@@ -5,7 +5,7 @@ var browserConfig = {
 	entry: './src/client/main.js',
 	output: {
 		path: path.join(__dirname, 'build/assets'),
-		filename: 'bundle.js',
+		filename: 'client.js',
 	},
 	module: {
 		rules: [

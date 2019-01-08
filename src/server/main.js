@@ -20,6 +20,11 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use('/assets', [
+  express.static('assets'),
+  express.static('build/assets'),
+]);
+
 // API routes
 for (const route of apiRoutes) {
 	app.use('/api', route(express.Router()));
