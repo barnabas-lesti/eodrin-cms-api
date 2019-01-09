@@ -1,7 +1,13 @@
-import root from './root';
+import postGroups from './postGroups';
+import postPage from './postPage';
+import postsRoot from './postsRoot';
+import staticPages from './staticPages';
 
 const viewRoutes = [
-	root,
+	staticPages,
+	postsRoot,
+	postGroups,
+	postPage,
 ];
 
 export default viewRoutes;
