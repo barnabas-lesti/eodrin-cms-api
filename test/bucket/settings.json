@@ -1,0 +1,32 @@
+{
+	"rootTitle": "My Site",
+	"siteLogoUrl": "/assets/images/site-logo.svg",
+	"copyrightText": "© 2018 Coding in the Rain, Inc.",
+	"menuItems": [
+		{
+			"label": "Home",
+			"path": "/"
+		},
+		{
+			"label": "Posts",
+			"path": "/posts"
+		}
+	],
+	"social": [
+		{
+			"label": "Facebook",
+			"url": "https://www.facebook.com/barnabas.lesti",
+			"imageUrl": "/assets/images/social/facebook.svg"
+		},
+		{
+			"label": "Twitter",
+			"url": "https://twitter.com/barnabas_lesti",
+			"imageUrl": "/assets/images/social/twitter.svg"
+		},
+		{
+			"label": "Instagram",
+			"url": "https://www.instagram.com/lesti.b",
+			"imageUrl": "/assets/images/social/instagram.svg"
+		}
+	]
+}

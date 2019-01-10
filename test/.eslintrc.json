@@ -1,6 +1,0 @@
-{
-	"rules": {
-		"no-unused-expressions": 0,
-		"no-sync": 0
-	}
-}

@@ -4,23 +4,26 @@ const fs = require('fs');
 const path = require('path');
 const yargs = require('yargs');
 
-const { requester } = require('./suite');
+// const { requester } = require('./suite');
 
+/**
+ * Test packs (unit, integration, e2e, etc.)
+ */
 const packs = [
 	{
-		description: 'Integration Tests',
-		type: 'integration',
+		description: 'Unit Tests',
+		type: 'unit',
 	},
 ];
 
 /**
- * Imports all tests from a specific library.
+ * Imports all tests from a specific type.
  *
- * @param {string} directory Directory name
+ * @param {String} type Directory name basically...
  * @returns {void}
  */
-function requireTests (directory) {
-	const dirPath = path.join(__dirname, directory);
+function requireTests (type) {
+	const dirPath = path.join(__dirname, type);
 	const files = fs.readdirSync(dirPath);
 	for (const file of files) {
 		require(path.join(dirPath, file));
@@ -31,12 +34,9 @@ describe('Eodrin API Tests', () => {
 	const onlyArg = yargs.argv.only;
 	const packArg = yargs.argv.pack;
 
-	after(() => {
-		requester.close();
-	});
-
 	if (onlyArg) {
-		require(path.join(__dirname, onlyArg));
+		const testFileName = onlyArg.indexOf('.test') == -1 ? `${ onlyArg }.test` : onlyArg;
+		require(path.join(__dirname, testFileName));
 	} else {
 		for (const pack of packs) {
 			if (!packArg || packArg === pack.type) {

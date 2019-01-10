@@ -1,0 +1,8 @@
+{
+	"common": {
+		"ENV": "development"
+	},
+	"dataStore": {
+		"BUCKET_PATH": "C:/Users/Barnabas_Lesti/Work/Repos/MyProjects/eodrin-cms-api/bucket"
+	}
+}

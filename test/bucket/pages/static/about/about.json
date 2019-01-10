@@ -1,0 +1,6 @@
+{
+	"description": "About page description for SEO and other stuff.",
+	"title": "About page",
+	"keywords": [ "about", "about page", "eodrin cms" ],
+	"pageTemplate": "BasicTemplate"
+}

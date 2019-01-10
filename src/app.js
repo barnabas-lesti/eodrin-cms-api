@@ -1,5 +1,4 @@
 const bodyParser = require('body-parser');
-const compression = require('compression');
 const cors = require('cors');
 const express = require('express');
 
@@ -10,28 +9,39 @@ const config = require('./common/config');
 const logger = require('./common/logger');
 const responder = require('./middlewares/responder');
 
-const app = express();
-logger.info(`Using config: "${ config.common.ENV }"`);
+class App {
+	constructor () {
+		this._app = express();
+		logger.info(`Using config: "${ config.common.ENV }"`);
 
-// Before routes middlewares
-app.use(compression());
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+		// Before routes middlewares
+		this._app.use(cors());
+		this._app.use(bodyParser.urlencoded({ extended: true }));
+		this._app.use(bodyParser.json());
 
-// Setting up routes
-for (const route of routes) {
-	app.use('/api', route(express.Router()));
+		// Setting up routes
+		for (const route of routes) {
+			this._app.use('/api', route(express.Router()));
+		}
+
+		// After routes middlewares
+		this._app.use(responder());
+	}
+
+	/**
+	 * Starts the server.
+	 *
+	 * @returns {void}
+	 */
+	async start () {
+		database.connect();
+		const server = this._app.listen(config.common.PORT, () => {
+			const { address, port } = server.address();
+			logger.info(`API Server started: ${ address + port }`);
+			return server;
+		});
+	}
 }
 
-// After routes middlewares
-app.use(responder());
-
-// Connecting to the database and starting the server
-database.connect();
-const server = app.listen(config.common.PORT, () => {
-	const { address, port } = server.address();
-	logger.info(`API Server started: ${ address + port }`);
-});
-
+const app = new App();
 module.exports = app;

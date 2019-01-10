@@ -1,6 +1,8 @@
 {
 	"common": {
-		"ENV": "test",
-		"PORT": 7000
+		"ENV": "test"
+	},
+	"dataStore": {
+		"BUCKET_PATH": "C:/Users/Barnabas_Lesti/Work/Repos/MyProjects/eodrin-cms-api/test/bucket"
 	}
 }

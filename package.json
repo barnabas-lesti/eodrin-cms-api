@@ -4,15 +4,14 @@
 	"description": "Backend API for Eodrin CMS",
 	"main": "./src/app.js",
 	"scripts": {
-		"start:local": "nodemon ./src/app.js -e js,json --ignore ./test --env=local",
-		"lint": "eslint ./**/*.js",
+		"start:dev": "nodemon --watch ./src ./src/main.js --env=development",
+		"lint": "eslint ./src/**/*.js",
 		"test": "mocha ./test/main.js --exit"
 	},
 	"author": "Barnabas Lesti <barnabas.lesti@gmail.com>",
 	"license": "ISC",
 	"dependencies": {
 		"body-parser": "^1.18.3",
-		"compression": "^1.7.3",
 		"config": "^2.0.1",
 		"cors": "^2.8.5",
 		"express": "^4.16.4",
