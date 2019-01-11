@@ -4,7 +4,10 @@
  * @return {void}
  */
 const responder = () => (req, res) => {
-	const { data, error } = res.locals;
+	const {
+		data,
+		error,
+	} = res.locals;
 
 	let responsePayload;
 	let status;

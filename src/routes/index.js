@@ -1,7 +1,9 @@
 const posts = require('./posts');
+const settings = require('./settings');
 const staticPages = require('./staticPages');
 
 module.exports = [
-	staticPages,
 	posts,
+	settings,
+	staticPages,
 ];

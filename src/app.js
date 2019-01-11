@@ -1,30 +1,29 @@
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
-
-const database = require('./database');
-const routes = require('./routes');
+const morgan = require('morgan');
 
 const config = require('./common/config');
 const logger = require('./common/logger');
+const database = require('./database');
 const responder = require('./middlewares/responder');
+const routes = require('./routes');
 
 class App {
 	constructor () {
 		this._app = express();
 		logger.info(`Using config: "${ config.common.ENV }"`);
 
-		// Before routes middlewares
+		this._app.use(morgan('common'));
 		this._app.use(cors());
 		this._app.use(bodyParser.urlencoded({ extended: true }));
 		this._app.use(bodyParser.json());
+		this._app.use('/assets', express.static(`${ config.dataStore.BUCKET_PATH }/assets`));
 
-		// Setting up routes
 		for (const route of routes) {
 			this._app.use('/api', route(express.Router()));
 		}
 
-		// After routes middlewares
 		this._app.use(responder());
 	}
 
