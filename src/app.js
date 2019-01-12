@@ -14,12 +14,12 @@ class App {
 		this._app = express();
 		logger.info(`Using config: "${ config.common.ENV }"`);
 
-		this._app.use(morgan('common'));
 		this._app.use(cors());
 		this._app.use(bodyParser.urlencoded({ extended: true }));
 		this._app.use(bodyParser.json());
 		this._app.use('/assets', express.static(`${ config.dataStore.BUCKET_PATH }/assets`));
 
+		this._app.use('/api', morgan('common'));
 		for (const route of routes) {
 			this._app.use('/api', route(express.Router()));
 		}

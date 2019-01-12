@@ -20,21 +20,20 @@ class ContentService extends Service {
 		if (!(config.dataStore && config.dataStore.BUCKET_PATH !== null)) {
 			throw new ApiError(ApiError.SERVICE_ERROR, '"config.dataStore.BUCKET_PATH" is not defined, to use this service, path to the bucket is required.');
 		}
-
 		this._PAGES_BUCKET_PATH = path.join(config.dataStore.BUCKET_PATH, ROOT_PAGES_FOLDER);
 	}
 
 	/**
 	 * Returns a post object based on the postId and postGroupId.
 	 *
-	 * @param {String} postId Post ID
-	 * @param {String} postGroupId Post Group ID
+	 * @param {String} postPath Path to the post
 	 * @returns {Promise<Page>} The post promise object
 	 */
-	async getPost (postId, postGroupId = '') {
-		const postPath = path.join(POSTS_FOLDER, postGroupId, postId);
+	async getPost (postPath) {
+		const fullPostPath = path.join(POSTS_FOLDER, postPath);
+		console.log(fullPostPath);
 		try {
-			const post = await this._fetchPageFromBucket(postPath);
+			const post = await this._fetchPageFromBucket(fullPostPath);
 			return post;
 		} catch (error) {
 			logger.error(error);
@@ -44,13 +43,13 @@ class ContentService extends Service {
 	/**
 	 * Returns a list of posts based on provided postGroupId.
 	 *
-	 * @param {String} postGroupId Post Group ID
+	 * @param {String} postPath Path to the post
 	 * @returns {Promise<Array<Page>>} The post array promise
 	 */
-	async getPosts (postGroupId = '') {
-		const postsPath = path.join(POSTS_FOLDER, postGroupId);
+	async getPosts (postPath) {
+		const fullPostsPath = path.join(POSTS_FOLDER, postPath);
 		try {
-			const posts = await this._fetchSubPagesFromBucket(postsPath);
+			const posts = await this._fetchSubPagesFromBucket(fullPostsPath);
 			return posts;
 		} catch (error) {
 			logger.error(error);
