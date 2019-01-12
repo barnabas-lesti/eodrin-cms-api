@@ -3,6 +3,7 @@
 	"siteLogoUrl": "/assets/images/site-logo.svg",
 	"copyrightText": "© 2018 Coding in the Rain, Inc.",
 	"baseHref": "/",
+	"homePage": "home",
 	"menuItems": [
 		{
 			"label": "Home",
