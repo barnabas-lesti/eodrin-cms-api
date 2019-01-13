@@ -31,7 +31,6 @@ class ContentService extends Service {
 	 */
 	async getPost (postPath) {
 		const fullPostPath = path.join(POSTS_FOLDER, postPath);
-		console.log(fullPostPath);
 		try {
 			const post = await this._fetchPageFromBucket(fullPostPath);
 			return post;
