@@ -6,12 +6,10 @@ const config = require('../common/config');
 const logger = require('../common/logger');
 const Service = require('./Service');
 
-const ROOT_PAGES_FOLDER = 'pages';
-const POSTS_FOLDER = 'posts';
-const STATIC_PAGES_FOLDER = 'static';
+const PAGES_FOLDER = 'pages';
 
 /**
- * Content logic related service.
+ * Page logic related service.
  */
 class ContentService extends Service {
 	constructor () {
@@ -20,52 +18,34 @@ class ContentService extends Service {
 		if (!(config.dataStore && config.dataStore.BUCKET_PATH !== null)) {
 			throw new ApiError(ApiError.SERVICE_ERROR, '"config.dataStore.BUCKET_PATH" is not defined, to use this service, path to the bucket is required.');
 		}
-		this._PAGES_BUCKET_PATH = path.join(config.dataStore.BUCKET_PATH, ROOT_PAGES_FOLDER);
+		this._PAGES_BUCKET_PATH = path.join(config.dataStore.BUCKET_PATH, PAGES_FOLDER);
 	}
 
 	/**
-	 * Returns a post object based on the postId and postGroupId.
+	 * Returns a page object based on the page path.
 	 *
-	 * @param {String} postPath Path to the post
-	 * @returns {Promise<Page>} The post promise object
-	 */
-	async getPost (postPath) {
-		const fullPostPath = path.join(POSTS_FOLDER, postPath);
-		try {
-			const post = await this._fetchPageFromBucket(fullPostPath);
-			return post;
-		} catch (error) {
-			logger.error(error);
-		}
-	}
-
-	/**
-	 * Returns a list of posts based on provided postGroupId.
-	 *
-	 * @param {String} postPath Path to the post
-	 * @returns {Promise<Array<Page>>} The post array promise
-	 */
-	async getPosts (postPath) {
-		const fullPostsPath = path.join(POSTS_FOLDER, postPath);
-		try {
-			const posts = await this._fetchSubPagesFromBucket(fullPostsPath);
-			return posts;
-		} catch (error) {
-			logger.error(error);
-		}
-	}
-
-	/**
-	 * Returns a static page based on the pageId.
-	 *
-	 * @param {String} pageId Page ID
+	 * @param {String} pagePath Path to the page
 	 * @returns {Promise<Page>} The page promise object
 	 */
-	async getStaticPage (pageId) {
+	async getPageFromBucketByPagePath (pagePath) {
 		try {
-			const pagePath = path.join(STATIC_PAGES_FOLDER, pageId);
 			const page = await this._fetchPageFromBucket(pagePath);
 			return page;
+		} catch (error) {
+			logger.error(error);
+		}
+	}
+
+	/**
+	 * Returns a list of pages based on provided page path.
+	 *
+	 * @param {String} pagePath Path to the parent page
+	 * @returns {Promise<Array<Page>>} The pages array promise
+	 */
+	async getSubPagesFromBucketByPagePath (pagePath) {
+		try {
+			const subPages = await this._fetchSubPagesFromBucket(pagePath);
+			return subPages;
 		} catch (error) {
 			logger.error(error);
 		}
