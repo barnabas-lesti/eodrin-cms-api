@@ -6,9 +6,8 @@ const config = require('../common/config');
 const logger = require('../common/logger');
 const Service = require('./Service');
 
+const FILE_RESOLVE_TOKEN = 'file://';
 const ROOT_PAGES_FOLDER = 'pages';
-const POSTS_FOLDER = 'posts';
-const STATIC_PAGES_FOLDER = 'static';
 
 /**
  * Content logic related service.
@@ -24,48 +23,39 @@ class ContentService extends Service {
 	}
 
 	/**
-	 * Returns a post object based on the postId and postGroupId.
+	 * Returns a single page object based on the pagePath.
 	 *
-	 * @param {String} postPath Path to the post
-	 * @returns {Promise<Page>} The post promise object
-	 */
-	async getPost (postPath) {
-		const fullPostPath = path.join(POSTS_FOLDER, postPath);
-		try {
-			const post = await this._fetchPageFromBucket(fullPostPath);
-			return post;
-		} catch (error) {
-			logger.error(error);
-		}
-	}
-
-	/**
-	 * Returns a list of posts based on provided postGroupId.
-	 *
-	 * @param {String} postPath Path to the post
-	 * @returns {Promise<Array<Page>>} The post array promise
-	 */
-	async getPosts (postPath) {
-		const fullPostsPath = path.join(POSTS_FOLDER, postPath);
-		try {
-			const posts = await this._fetchSubPagesFromBucket(fullPostsPath);
-			return posts;
-		} catch (error) {
-			logger.error(error);
-		}
-	}
-
-	/**
-	 * Returns a static page based on the pageId.
-	 *
-	 * @param {String} pageId Page ID
+	 * @param {String} pagePath Path to the page
 	 * @returns {Promise<Page>} The page promise object
 	 */
-	async getStaticPage (pageId) {
+	async getPageByPagePath (pagePath) {
 		try {
-			const pagePath = path.join(STATIC_PAGES_FOLDER, pageId);
 			const page = await this._fetchPageFromBucket(pagePath);
 			return page;
+		} catch (error) {
+			logger.error(error);
+		}
+	}
+
+	/**
+	 * Returns the pages that match the page types query criteria.
+	 *
+	 * @param {Array<String>} pageTypesQuery Types to filter
+	 * @returns {Promise<Array<Page>>} Filtered pages
+	 */
+	async getPagesByPageTypes (pageTypesQuery = []) {
+		try {
+			const allPages = await this._fetchAllPagesFromBucket('/', true);
+			const filteredPages = allPages.filter(page => {
+				const pageTypes = page.meta && page.meta.types || [];
+				for (const typeQuery of pageTypesQuery) {
+					if (pageTypes.indexOf(typeQuery) !== -1) {
+						return true;
+					}
+				}
+				return false;
+			});
+			return filteredPages;
 		} catch (error) {
 			logger.error(error);
 		}
@@ -105,16 +95,12 @@ class ContentService extends Service {
 		const pageFullPath = path.join(this._PAGES_BUCKET_PATH, pagePath);
 		const pageFilesPath = path.join(pageFullPath, pageId);
 		try {
-			const [ content, rawMetaData ] = await Promise.all([
-				fsExtra.readFile(`${ pageFilesPath }.md`, 'utf-8'),
-				fsExtra.readFile(`${ pageFilesPath }.json`, 'utf-8'),
-			]);
-
-			const metaData = JSON.parse(rawMetaData);
+			const rawContentDescription = await fsExtra.readFile(`${ pageFilesPath }.json`, 'utf-8');
+			const contentDescription = JSON.parse(rawContentDescription);
+			const pageData = await this._resolveFileReferences(pageFullPath, contentDescription);
 			const page = {
-				content,
-				pagePath: pagePath.replace(/\\/g, '/'),
-				...metaData,
+				path: pagePath.replace(/\\/g, '/'),
+				...pageData,
 			};
 			return page;
 		} catch (error) {
@@ -129,26 +115,77 @@ class ContentService extends Service {
 	 * Fetches sub pages for the given parent page.
 	 *
 	 * @param {String} pagePath Path to the parent page
+	 * @param {Boolean} deepSearch Flag to search in inner directories
 	 * @returns {Promise<Array<Page>>} Array of sub pages promise
 	 */
-	async _fetchSubPagesFromBucket (pagePath) {
+	async _fetchAllPagesFromBucket (pagePath, deepSearch = false) {
 		const pageFullPath = path.join(this._PAGES_BUCKET_PATH, pagePath);
 		try {
-			const subPageIds = (await fsExtra.readdir(pageFullPath)).filter(item => !(item.endsWith('.md') || item.endsWith('.json')));
-			const subPagePromises = [];
+			const subPageIds = (await fsExtra.readdir(pageFullPath)).filter(async item => {
+				const stats = await fsExtra.lstat(path.join(pageFullPath, item));
+				return stats.isDirectory();
+			});
+			const pagePromises = [];
 			for (const subPageId of subPageIds) {
 				const subPagePath = path.join(pagePath, subPageId);
-				subPagePromises.push(this._fetchPageFromBucket(subPagePath));
+				pagePromises.push(this._fetchPageFromBucket(subPagePath));
+				if (deepSearch) {
+					pagePromises.push(this._fetchAllPagesFromBucket(subPagePath, true));
+				}
 			}
-			const subPages = (await Promise.all(subPagePromises)).filter(subPage => subPage !== null);
-			return subPages;
+			const resolvedPagePromises = (await Promise.all(pagePromises)).filter(page => page !== null);
+			const pages = [];
+			for (const resolvedPagePromise of resolvedPagePromises) {
+				if (Array.isArray(resolvedPagePromise)) {
+					pages.push(...resolvedPagePromise);
+				} else {
+					pages.push(resolvedPagePromise);
+				}
+			}
+			return pages;
 		} catch (error) {
 			if (!error.code === 'ENOENT') {
 				logger.error(error);
 			}
 			return null;
 		}
+	}
 
+	/**
+	 * Looks for file references in the description and loads the content.
+	 *
+	 * @param {String} rootPath Root path of the resolve entry
+	 * @param {Object} description Object to parse for file tokens
+	 * @returns {Promise<Object>} The resolved object
+	 */
+	async _resolveFileReferences (rootPath, description) {
+		const resolvedObject = {};
+		for (const prop in description) {
+			if (description.hasOwnProperty(prop)) {
+				const propValue = description[prop];
+				if (typeof propValue === 'object') {
+					resolvedObject[prop] = Array.isArray(propValue) ? propValue : await this._resolveFileReferences(rootPath, propValue);
+				} else if (propValue.startsWith(FILE_RESOLVE_TOKEN)) {
+					const filePath = propValue.substring(FILE_RESOLVE_TOKEN.length);
+					try {
+						const resolvedRawData = await fsExtra.readFile(path.join(rootPath, filePath), 'utf-8');
+						if (!filePath.endsWith('.json')) {
+							resolvedObject[prop] = resolvedRawData;
+						} else {
+							resolvedObject[prop] = await this._resolveFileReferences(rootPath, JSON.parse(resolvedRawData));
+						}
+					} catch (error) {
+						if (!error.code === 'ENOENT') {
+							logger.error(error);
+						}
+						resolvedObject[prop] = null;
+					}
+				} else {
+					resolvedObject[prop] = propValue;
+				}
+			}
+		}
+		return resolvedObject;
 	}
 }
 

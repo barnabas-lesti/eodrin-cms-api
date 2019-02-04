@@ -2,5 +2,9 @@
 	"description": "FAQ page description for SEO and other stuff.",
 	"title": "FAQ page",
 	"keywords": [ "FAQ", "FAQ page", "eodrin cms" ],
-	"pageTemplate": "BasicTemplate"
+	"pageTemplate": "BasicTemplate",
+
+	"meta": {
+		"types": [ "static" ]
+	}
 }
